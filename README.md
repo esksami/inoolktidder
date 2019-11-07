@@ -14,3 +14,11 @@ Reddit-tyylinen julkinen keskustelufoorumi, jossa kuka tahansa rekisteröitynyt 
 # Tietokantakaavio
 
 ![Tietokantakaavio](documentation/images/Tietokantakaavio.png)
+
+
+# User storyt
+
+- User can add a post
+- User can view all posts
+- User can like posts
+- User can view content of a post
