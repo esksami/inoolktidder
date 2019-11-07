@@ -123,4 +123,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/tasks.db
-tidder.db
+
+# sqlite3 database
+application/tidder.db
