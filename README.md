@@ -22,3 +22,4 @@ Reddit-tyylinen julkinen keskustelufoorumi, jossa kuka tahansa rekisteröitynyt 
 - User can view all posts
 - User can like posts
 - User can view content of a post
+- User can edit the title and contents of a post
