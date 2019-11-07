@@ -7,4 +7,4 @@ Reddit-tyylinen julkinen keskustelufoorumi, jossa kuka tahansa rekisteröitynyt 
 
 # Tietokantakaavio
 
-![Tietokantakaavio](images/Tietokantakaavio.png)
+![Tietokantakaavio](documentation/images/Tietokantakaavio.png)
