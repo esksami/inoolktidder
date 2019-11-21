@@ -52,6 +52,20 @@ def posts_edit(post_id):
   
     return redirect(url_for("posts_details", post_id=post_id))
 
+@app.route("/posts/delete/<post_id>/", methods=["POST"])
+@login_required
+def posts_delete(post_id):
+    post = Post.query.get(post_id)
+
+    if post.account_id != current_user.id:
+        return render_template("posts/details.html", post=post,
+                        error="You can't delete someone elses post.")
+
+    db.session().delete(post)
+    db.session().commit()
+  
+    return redirect(url_for("posts_index"))
+
 @app.route("/posts/<post_id>/")
 def posts_details(post_id):
     return render_template("posts/details.html", post=Post.query.get(post_id))

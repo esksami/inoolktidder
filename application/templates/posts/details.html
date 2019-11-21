@@ -15,4 +15,7 @@
     <input type="submit" value="Like!"/>
   </form>
   <a href="{{ url_for('posts_edit_form', post_id=post.id) }}">Edit post</a>
+  <form method="POST" action="{{ url_for('posts_delete', post_id=post.id) }}">
+    <input type="submit" value="Delete post."/>
+  </form>
 {% endblock %}
