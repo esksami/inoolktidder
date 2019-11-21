@@ -22,13 +22,13 @@
         </ul>
         <div class="form-inline mt-2 mt-md-0">
           {% if current_user.is_authenticated %}
-          <span>Hei {{ current_user.name }}.
+          <span>Hi {{ current_user.name }}.
             {% if post_count %}
-            Sinulla on {{ post_count }} postausta.
+            You have {{ post_count }} posts.
             {% endif %}
-          </span> <a href="{{ url_for('auth_logout') }}"> Kirjaudu ulos.</a>
+          </span> <a href="{{ url_for('auth_logout') }}"> Log out.</a>
           {% else %}
-          <a href="{{ url_for('auth_login') }}">Login</a>
+          <a href="{{ url_for('auth_login') }}">Login.</a>
           {% endif %}
         </div>
       </div>
