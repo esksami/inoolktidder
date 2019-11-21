@@ -9,6 +9,9 @@ class Post(db.Model):
     content = db.Column(db.String(8192), nullable=False)
     likes = db.Column(db.Integer, default=0)
 
+    account_id = db.Column(db.Integer, db.ForeignKey('account.id'),
+                           nullable=False)
+
     def __init__(self, title, content):
         self.title = title
         self.content = content
