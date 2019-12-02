@@ -1,43 +1,36 @@
 {% extends "layout.html" %}
 
 {% block body %}
-<form method="POST" action="{{ url_for('posts_edit', post_id=post.id) }}">
-  <table>
-    <tr>
-      <td>
-        {{ form.title.label }}
-      </td>
-      <td>
-        {{ form.title(value=post.title) }}
-      </td>
-      <td>
-        <ul>
-          {% for error in form.title.errors %}
-          <li>{{ error }}</li>
-          {% endfor %}
-        </ul>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        {{ form.content.label }}
-      </td>
-      <td>
-        {{ form.content(value=post.content) }}
-      </td>
-      <td>
-        <ul>
-          {% for error in form.content.errors %}
-          <li>{{ error }}</li>
-          {% endfor %}
-        </ul>
-      </td>
-    </tr>
-    <tr>
-      <td colspan="2">
-        <input type="submit" value="Edit post"/>
-      </td>
-    </tr>
-  </table>
-</form>
+<div class="bg-white border rounded p-3">
+  <form method="POST" action="{{ url_for('posts_edit', post_id=post.id) }}">
+    <div class="my-2">
+      {{ form.title.label(class_="font-weight-bold") }}
+      {{ form.title(class_="form-control", value=post.title) }}
+    </div>
+    <div class="text-info">
+      <ul>
+        {% for error in form.title.errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="my-2">
+      {{ form.content.label(class_="font-weight-bold") }}
+      <!-- https://stackoverflow.com/questions/5117479/wtforms-how-to-prepopulate-a-textarea-field
+      I have no idea why this works. -->
+      {% set f = form.content.process_data(post.content) %}
+      {{ form.content(rows=12, class_="form-control") }}
+    </div>
+    <div class="text-info">
+      <ul>
+        {% for error in form.content.errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div>
+       <button class="btn btn-success btn-block btn-rounded" type="submit">Confirm</button>
+    </div>
+  </form>
+</div>
 {% endblock %}
