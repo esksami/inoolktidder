@@ -24,19 +24,21 @@
           <h1>{{ post.title }}<h1>
         </div>
         <div class="content-container flex-grow-1 my-auto">
-          {% for paragraph in post.content.split('\n') %}
-            <p>{{ paragraph }}</p>
-          {% endfor %}
+        {% for paragraph in post.content.split('\n') %}
+          <p>{{ paragraph }}</p>
+        {% endfor %}
         </div>
         <div class="misc-container d-flex flex-row">
           <div class="comments mr-3">
             <span class="font-weight-bold">2.7k Comments</span>
           </div>
+        {% if current_user.id == post.account_id %}
           <div class="edit mr-3">
             <a href="{{ url_for('posts_edit_form', post_id=post.id) }}">
               <span class="font-weight-bold">Edit</span>
             </a>
           </div>
+        {% endif %}
         </div>
       </div>  
     </div>
