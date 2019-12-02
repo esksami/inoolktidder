@@ -24,7 +24,9 @@
           <h1>{{ post.title }}<h1>
         </div>
         <div class="content-container flex-grow-1 my-auto">
-          <p>{{ post.content }}</p>
+          {% for paragraph in post.content.split('\n') %}
+            <p>{{ paragraph }}</p>
+          {% endfor %}
         </div>
         <div class="misc-container d-flex flex-row">
           <div class="comments mr-3">
