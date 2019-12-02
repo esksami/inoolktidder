@@ -1,22 +1,31 @@
 {% extends "layout.html" %}
 
 {% block body %}
-  <table>
-    <tr>
-      <th>Post</th>
-      <th>Likes</th>
-      <th></th>
-    </tr>
-    {% for post in posts %}
-    <tr>
-      <td><a href="{{ url_for('posts_details', post_id=post.id) }}">{{ post.title }}</a></td>
-      <td>{{ post.likes }}</td>
-      <td>
-  <form method="POST" action="{{ url_for('posts_like', post_id=post.id) }}">
-    <input type="submit" value="Like!"/>
-  </form>
-      </td>
-    </tr>
-    {% endfor %}
-  </table>
+  <div class="d-flex flex-column"
+       style="max-width:800px;margin-left:auto;margin-right:auto;">
+  {% for post in posts %}
+    <div class="d-flex flex-row border m-1">
+      <div class="d-flex flex-column col-1">
+        <div class="mx-auto mb-n3 text-center">
+          <form method="POST" action="{{ url_for('posts_like', post_id=post.id) }}">
+            <button class="invisible p-0" type="submit">
+              <i class="material-icons visible">arrow_drop_up</i>
+            </button>
+          </form>
+        </div>
+        <div class="mx-auto text-center">
+          <span>{{ post.likes }}</span>
+        </div>
+        <div class="mx-auto mt-n2 text-center">
+          <i class="material-icons">arrow_drop_down</i>
+        </div>
+      </div>
+      <div class="flex-grow-1 my-auto p-2 pb-3">
+        <a href="{{ url_for('posts_details', post_id=post.id) }}">
+          {{ post.title }}
+        </a>
+      </div>
+    </div>
+  {% endfor %}
+  </div>
 {% endblock %}
