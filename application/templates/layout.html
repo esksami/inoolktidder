@@ -8,8 +8,22 @@
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
   </head>
   <body class="bg-light">
-    <nav class="">
-      <a href="/">Tidder</a>
+    <nav class="navbar bg-white border-bottom mb-3">
+      <a class="navbar-brand" href="/">
+        <h1>Tidder</h1>
+      </a>
+    {% if current_user.is_authenticated %}
+      <span class="ml-auto">
+        Logged in as <span class="text-info font-weight-bold">{{ current_user.name }}</span>.
+      </span>
+      <a class="nav-link" href="{{ url_for('auth_logout') }}">
+        Log out.
+      </a>
+    {% else %}
+      <a class="nav-link" href="{{ url_for('auth_login') }}">
+        Sign in
+      </a>
+    {% endif %}
     </nav>  
     <main role="main" class="container">
       <div class="mx-auto" style="max-width:800px">
