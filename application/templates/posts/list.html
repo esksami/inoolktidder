@@ -2,6 +2,22 @@
 
 {% block body %}
   <div class="d-flex flex-column mx-auto">
+    <div class="d-flex flex-row m-0 p-1">
+      <div class="text-center shadow-sm rounded bg-white">
+        <form action="{{ url_for('posts_submit') }}">
+        <button class="btn btn-lg btn-block btn-outline-success  font-weight-bold visible text-center">
+          <div class="d-flex flex-row mb-n1">
+            <div class="text-center my-auto ml-n1">
+              <i class="material-icons font-weight-bold">add_circle_outline</i>
+            </div>
+            <div class="text-center m-auto pl-3 pb-2 pr-1">
+              <span class="">Post something!</span>
+            </div>
+          </div>
+        </button>
+        </form>
+      </div>
+    </div>
   {% for post in posts %}
     <div class="d-flex flex-row shadow-sm rounded bg-white m-1">
       <div class="d-flex flex-column px-1"
@@ -9,7 +25,7 @@
         <div class="mx-auto mb-n3 text-center">
           <form method="POST" action="{{ url_for('posts_like', post_id=post.id) }}">
             <button class="invisible p-0" type="submit">
-              <i class="material-icons visible">arrow_drop_up</i>
+              <i class="material-icons font-weight-bold visible">arrow_drop_up</i>
             </button>
           </form>
         </div>
@@ -17,7 +33,7 @@
           <span class="font-weight-bold">{{ post.likes }}</span>
         </div>
         <div class="mx-auto mt-n2 text-center">
-          <i class="material-icons">arrow_drop_down</i>
+          <i class="material-icons font-weight-bold">arrow_drop_down</i>
         </div>
       </div>
       <div class="flex-grow-1 my-auto p-2 pb-3">
