@@ -24,31 +24,19 @@ class Post(Base):
     def time_since_posted(self):
         delta = datetime.now() - self.date_created
 
-        unit, value = '', 0
+        unitValuePairs = (
+            ('year', delta.days // 265.24),
+            ('month', delta.days // 30.44),
+            ('week', delta.days // 7),
+            ('day', delta.days),
+            ('hour', delta.seconds // 3600),
+            ('minute', delta.seconds // 60),
+            ('second', delta.seconds)
+        )
 
-        if not delta.days:
-            if delta.seconds < 60:
-                unit = 'second'
-                value = delta.seconds
-            elif delta.seconds < 3600:
-                unit = 'minute'
-                value = delta.seconds // 60
-            else:
-                unit = 'hour'
-                value = delta.seconds // 3600
-        else:
-            if delta.days < 7:
-                unit = 'day'
-                value = delta.days
-            elif delta.days < 30.44:
-                unit = 'week'
-                value = delta.days // 7
-            elif delta.days < 365.24:
-                unit = 'month'
-                value = delta.days // 30.44
-            else:
-                unit = 'year'
-                value = delta.days // 365.24
+        unit, value = next(
+            (unit, value) for unit, value in unitValuePairs if value > 0
+        )
 
         plural = 's' if value > 1 else ''
 
