@@ -2,14 +2,19 @@ from flask import redirect, render_template, request, url_for
 from flask_login import login_required, current_user
 
 from application import app, db
+
 from application.posts.models import Post
 from application.posts.forms import PostForm
+
+from application.auth.models import User
 
 
 
 @app.route("/", methods=["GET"])
 def posts_index():
-    return render_template("posts/list.html", posts=Post.query.all())
+    posts = db.session().query(Post).join(User, User.id == Post.account_id).all()
+
+    return render_template("posts/list.html", posts=posts)
 
 @app.route("/submit")
 @login_required

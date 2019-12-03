@@ -10,3 +10,11 @@ h1 {
 h2 {
   font-size: 1.55rem
 }
+
+h3 {
+  font-size: 1.25rem
+}
+
+.small-text {
+	font-size: 0.7rem
+}
