@@ -1,14 +1,14 @@
 {% extends "layout.html" %}
 
 {% block body %}
-{{ error }}
 <div class="bg-white m-auto p-4 border rounded" style="min-width: 320px; max-width: 420px">
   <form class="form-signin" method="POST" action="{{ url_for('auth_login') }}">
     <h1 class="mb-4">Please sign in</h1>
-    <div class="">
+    <div class="my-2">
       {{ form.username.label(class_="sr-only") }}
       {{ form.username(class_="form-control", placeholder="Username", autofocus="", required="") }}
     </div>
+  {% if form.username.errors %}
     <div class="text-info">
       <ul>
         {% for error in form.username.errors %}
@@ -16,10 +16,12 @@
         {% endfor %}
       </ul>
     </div>
-    <div>
+  {% endif %}
+    <div class="my-2">
       {{ form.password.label(class_="sr-only") }}
       {{ form.password(class_="form-control", placeholder="Password", required="") }}
     </div>
+  {% if form.password.errors %}
     <div class="text-info">
       <ul>
         {% for error in form.password.errors %}
@@ -27,6 +29,12 @@
         {% endfor %}
       </ul>
     </div>
+  {% endif %}
+  {% if error %}
+    <div class="text-info text-center mb-2">
+      {{ error }}
+    </div>
+  {% endif %}
     <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
   </form>
   <hr>

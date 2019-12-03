@@ -20,8 +20,12 @@
         </div>
       </div>
       <div class="post-container d-flex flex-column p-2 pr-4">
+        <div class="small-text-l text-dark mb-1">
+          Posted by <span class="small-text-l text-dark font-weight-bold mr-1">{{ post.user.username }}</span> {{ post.time_since_created() }}
+        </div>
         <div class="title-container flex-grow-1 my-auto">
           <h1>{{ post.title }}<h1>
+          <hr class="my-2 shadow-sm">
         </div>
         <div class="content-container flex-grow-1 my-auto">
         {% for paragraph in post.content.split('\n') %}
@@ -30,13 +34,35 @@
         </div>
         <div class="misc-container d-flex flex-row">
           <div class="comments mr-3">
-            <span class="font-weight-bold">2.7k Comments</span>
+            <a class="invisible" href="/">
+              <button class="invisible p-0" type="submit">
+                <div class="d-flex flex-row btn p-0 color-hover visible">
+                  <div class="material-icons md-18 visible">forum</div>
+                  <div class="visible pb-2 pl-1 small font-weight-bold">2.7k Comments</div>
+                </div>
+              </button>
+            </a>
           </div>
         {% if current_user.id == post.account_id %}
           <div class="edit mr-3">
-            <a href="{{ url_for('posts_edit_form', post_id=post.id) }}">
-              <span class="font-weight-bold">Edit</span>
+            <a class="invisible" href="{{ url_for('posts_edit_form', post_id=post.id) }}">
+              <button class="invisible p-0" type="submit">
+                <div class="d-flex flex-row btn p-0 color-hover visible">
+                  <div class="material-icons md-18 visible">edit</div>
+                  <div class="visible pb-2 pl-1 small font-weight-bold">Edit</div>
+                </div>
+              </button>
             </a>
+          </div>
+          <div class="text-left">
+            <form method="POST" action="{{ url_for('posts_delete', post_id=post.id) }}">
+              <button class="invisible p-0" type="submit">
+                <div class="d-flex flex-row btn p-0 color-hover visible">
+                  <div class="material-icons md-18 visible">delete</div>
+                  <div class="visible pb-2 pl-1 small font-weight-bold">Delete</div>
+                </div>
+              </button>
+            </form>
           </div>
         {% endif %}
         </div>

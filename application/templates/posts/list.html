@@ -42,8 +42,8 @@
       </div> -->
       <div class="flex-grow-1 my-auto pt-1 pl-1 pr-1">
         <!-- posted by -->
-        <div class="text-muted small-text">
-          Posted by <span class="text-muted small-text font-weight-bold mr-1">{{ post.user.username }}</span> {{ post.time_since_created() }}
+        <div class="posted-by text-secondary small-text">
+          Posted by <span class="text-secondary small-text font-weight-bold mr-1">{{ post.user.username }}</span> {{ post.time_since_created() }}
         </div>
         <!-- title -->
         <div class="mt-1">
@@ -52,15 +52,37 @@
           </a>
         </div>
         <!-- comments + edit -->
-        <div class="misc-container d-flex flex-row">
-          <div class="comments mr-3">
-            <span class="small-text text-muted font-weight-bold">2.7k Comments</span>
+        <div class="misc-container d-flex flex-row pt-1">
+          <div class="comments mr-1">
+            <a class="invisible" href="/">
+              <button class="invisible p-0" type="submit">
+                <div class="d-flex flex-row btn p-0 color-hover text-secondary visible">
+                  <div class="material-icons md-14 visible">forum</div>
+                  <div class="visible pl-1 small-text font-weight-bold">2.7k Comments</div>
+                </div>
+              </button>
+            </a>
           </div>
         {% if current_user.id == post.account_id %}
-          <div class="edit mr-3">
-            <a href="{{ url_for('posts_edit_form', post_id=post.id) }}">
-              <span class="small-text text-muted font-weight-bold">Edit</span>
+          <div class="edit mr-1">
+            <a class="invisible" href="{{ url_for('posts_edit_form', post_id=post.id) }}">
+              <button class="invisible p-0" type="submit">
+                <div class="d-flex flex-row btn p-0 color-hover text-secondary visible">
+                  <div class="material-icons md-14 visible">edit</div>
+                  <div class="visible pb-1 pl-1 small-text font-weight-bold">Edit</div>
+                </div>
+              </button>
             </a>
+          </div>
+          <div class="delete text-left mr-1">
+            <form method="POST" action="{{ url_for('posts_delete', post_id=post.id) }}">
+              <button class="invisible p-0" type="submit">
+                <div class="d-flex flex-row btn p-0 color-hover text-secondary visible">
+                  <div class="material-icons md-14 visible">delete</div>
+                  <div class="visible pb-1 pl-1 small-text font-weight-bold">Delete</div>
+                </div>
+              </button>
+            </form>
           </div>
         {% endif %}
         </div>
