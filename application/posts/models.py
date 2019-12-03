@@ -21,7 +21,7 @@ class Post(Base):
         self.title = title
         self.content = content
 
-    def time_since_posted(self):
+    def time_since_created(self):
         delta = datetime.now() - self.date_created
 
         unitValuePairs = (
