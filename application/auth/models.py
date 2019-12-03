@@ -2,17 +2,16 @@ from application import db
 from application.models import Base
 
 class User(Base):
-
     __tablename__ = "account"
 
-    name = db.Column(db.String(144), nullable=False)
-    username = db.Column(db.String(144), nullable=False)
-    password = db.Column(db.String(144), nullable=False)
+    username = db.Column(db.String(144), unique=True, nullable=False)
+    phash = db.Column(db.String(60), nullable=False)
+    salt = db.Column(db.String(29), nullable=False)
 
-    def __init__(self, name, username, password):
-        self.name = name
+    def __init__(self, username, phash, salt):
         self.username = username
-        self.password = password
+        self.phash = phash
+        self.salt = salt
   
     def get_id(self):
         return self.id

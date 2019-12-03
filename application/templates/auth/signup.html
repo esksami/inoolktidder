@@ -3,8 +3,8 @@
 {% block body %}
 {{ error }}
 <div class="bg-white m-auto p-4 border rounded" style="min-width: 320px; max-width: 420px">
-  <form class="form-signin" method="POST" action="{{ url_for('auth_login') }}">
-    <h1 class="mb-4">Please sign in</h1>
+  <form class="form-signin" method="POST" action="{{ url_for('auth_signup') }}">
+    <h1 class="mb-4">Sign up</h1>
     <div class="">
       {{ form.username.label(class_="sr-only") }}
       {{ form.username(class_="form-control", placeholder="Username", autofocus="", required="") }}
@@ -27,13 +27,24 @@
         {% endfor %}
       </ul>
     </div>
-    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+    <div>
+      {{ form.confirmPassword.label(class_="sr-only") }}
+      {{ form.confirmPassword(class_="form-control", placeholder="Repeat password", required="") }}
+    </div>
+    <div class="text-info">
+      <ul>
+        {% for error in form.confirmPassword.errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
   </form>
   <hr>
   <div class="text-center">
-    <h2>Don't have an account?</h2>
-    <a class="btn btn-primary font-weight-bold" href="{{ url_for('auth_signup') }}">
-      Sign up here!
+    <h2>Already have an account?</h2>
+    <a class="btn btn-primary font-weight-bold" href="{{ url_for('auth_login') }}">
+      Sign in
     </a>
   </div>
 </div>

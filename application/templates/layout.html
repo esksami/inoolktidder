@@ -14,15 +14,24 @@
       </a>
     {% if current_user.is_authenticated %}
       <span class="ml-auto">
-        Logged in as <span class="text-info font-weight-bold">{{ current_user.name }}</span>.
+        Logged in as <span class="text-info font-weight-bold">{{ current_user.username }}</span>.
       </span>
       <a class="nav-link" href="{{ url_for('auth_logout') }}">
         Log out.
       </a>
     {% else %}
-      <a class="nav-link" href="{{ url_for('auth_login') }}">
-        Sign in
-      </a>
+      <div class="d-flex flex-row">
+        <div class="border-right">
+          <a class="nav-link px-2" href="{{ url_for('auth_login') }}">
+            Sign in
+          </a>
+        </div>
+        <div>
+          <a class="nav-link px-2" href="{{ url_for('auth_signup') }}">
+            Sign up
+          </a>
+        </div>
+      </div>
     {% endif %}
     </nav>  
     <main role="main" class="container">

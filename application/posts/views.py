@@ -9,7 +9,6 @@ from application.posts.forms import PostForm
 from application.auth.models import User
 
 
-
 @app.route("/", methods=["GET"])
 def posts_index():
     posts = db.session().query(Post).join(User, User.id == Post.account_id).all()
