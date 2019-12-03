@@ -35,7 +35,7 @@ class Post(Base):
         )
 
         unit, value = next(
-            (unit, value) for unit, value in unitValuePairs if value > 0
+            (unit, int(value)) for unit, value in unitValuePairs if value > 0
         )
 
         plural = 's' if value > 1 else ''
