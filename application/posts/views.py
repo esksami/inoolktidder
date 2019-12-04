@@ -8,6 +8,10 @@ from application.posts.forms import PostForm
 
 from application.auth.models import User
 
+from application.comments.models import Comment
+from application.comments.forms import CommentForm
+
+
 
 @app.route("/", methods=["GET"])
 def posts_index():
@@ -88,7 +92,14 @@ def posts_delete(post_id):
 
 @app.route("/<post_id>/")
 def posts_details(post_id):
-    return render_template("posts/details.html", post=Post.query.get(post_id))
+    comments = Comment.query.filter(Comment.post_id == Post.id).join(User, User.id == Comment.account_id).all()
+    print(comments)
+    return render_template(
+        "posts/details.html",
+        post=Post.query.get(post_id),
+        comments=comments,
+        form=CommentForm()
+    )
 
 @app.route("/posts/<post_id>/", methods=["POST"])
 @login_required
@@ -98,4 +109,3 @@ def posts_like(post_id):
     db.session().commit()
 
     return redirect(url_for("posts_index"))
-

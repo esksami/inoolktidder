@@ -1,0 +1,60 @@
+{% block body %}
+<div>
+  <div id="comment-box" style="max-width:450px">
+    <form method="POST" action="{{ url_for('comments_create', post_id = post.id) }}">
+      <div class="mt-2 mb-1">
+        {{ form.content.label(class_="sr-only") }}
+        {{ form.content(rows=4, class_="form-control", placeholder="Write your comment here...") }}
+      </div>
+      <div>
+        <div class="text-right small-text">
+          <button class="btn btn-success btn-rounded py-1 px-2 m-0 small-text-l font-weight-bold" type="submit">Send</button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div>
+  {% for comment in comments %}
+    <div class="main-container m-1 p-2 bg-white border rounded">
+      <div class="comment-container d-flex flex-column" id="{{ comment.id }}">
+        <div class="posted-by text-secondary small-text">
+          <span class="text-secondary small-text font-weight-bold mr-1">{{ comment.user.username }}</span> {{ comment.time_since_created() }}
+        </div>
+        <div class="content-container">
+        {% for paragraph in comment.content.split('\n')[:-1] %}
+          <p class="mb-1">{{ paragraph }}</p>
+        {% endfor %}
+          <p class="mb-0">{{ comment.content.split('\n')[-1] }}</p>
+        </div>
+        <div>
+          <button onclick="show_reply_box({{ comment.id }})">Reply</button>
+        </div>
+      </div>
+      <div class="child-container ml-5">
+        
+      </div>
+    </div>
+  {% endfor %}
+  </div>
+</div>
+<script type="text/javascript">
+  const show_reply_box = (comment_id) => {
+    var comment = document.getElementById(comment_id);
+    var childrenContainer = comment.nextElementSibling
+    var textnode = document.createTextNode('Water');
+
+    var commentBox = document.getElementById('comment-box')
+                             .cloneNode(true)
+    
+    console.log(comment_id)
+    act = `{{ url_for('comments_create', post_id=post.id) }}/${comment_id}`
+    console.log(act)
+    commentBox.getElementsByTagName('form')[0].action = act
+
+    childrenContainer.appendChild(commentBox)
+
+    return 0;
+  };
+
+</script>
+{% endblock %}
