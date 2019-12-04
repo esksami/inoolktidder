@@ -93,11 +93,15 @@ def posts_delete(post_id):
 @app.route("/<post_id>/")
 def posts_details(post_id):
     comments = Comment.query.filter(Comment.post_id == Post.id).join(User, User.id == Comment.account_id).all()
-    print(comments)
+    print(comments[0].__dict__)
+
+    commentTree = comment_tree(comments)
+
     return render_template(
         "posts/details.html",
         post=Post.query.get(post_id),
         comments=comments,
+        commentTree=commentTree,
         form=CommentForm()
     )
 
@@ -109,3 +113,61 @@ def posts_like(post_id):
     db.session().commit()
 
     return redirect(url_for("posts_index"))
+
+
+def comment_tree(comments):
+    commentsByParentId = comments_by_parent_id(comments)
+    roots = []
+
+    for rootComment in [c for c in comments if c.parent_id is None]:
+        root = CommentNode(
+            comment=rootComment,
+            **rootComment.__dict__)
+        print(root.__dict__)
+        root.children = populate(root, commentsByParentId)
+
+        roots.append(root)
+
+    return roots
+
+def populate(node, commentsByParentId):
+    try:
+        comments = commentsByParentId[node.id]
+    except KeyError:
+        return []
+
+    children = []
+
+    for comment in comments:
+        node = CommentNode(
+            comment=comment,
+            **comment.__dict__)
+        node.children = populate(node, commentsByParentId)
+
+        children.append(node)
+
+    return children
+
+from itertools import groupby
+
+def comments_by_parent_id(comments):
+    childComments = [c for c in comments if c.parent_id is not None]
+    sortedComments = sorted(childComments, key=lambda c: c.parent_id)
+    groups = groupby(sortedComments, key=lambda c: c.parent_id)
+    return {parent_id: list(children) for parent_id, children in groups}
+
+
+class CommentNode:
+    def __init__(self, comment, children = [], **kwargs):
+        self.comment = comment
+        self.children = children
+
+        for key, value in kwargs.items():
+          setattr(self, key, value)
+
+
+def traverse(node):
+    for child in node.children:
+        traverse(child)
+
+    return

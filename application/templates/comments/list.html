@@ -14,9 +14,11 @@
     </form>
   </div>
   <div>
-  {% for comment in comments %}
-    <div class="main-container m-1 p-2 bg-white border rounded">
-      <div class="comment-container d-flex flex-column" id="{{ comment.id }}">
+  {%- macro traverse(nodes) %}
+    {%- for node in nodes  %}
+      {%- set comment = node.comment %}
+    <div class="main m-1 p-2 bg-white border rounded">
+      <div class="comment d-flex flex-column" id="{{ comment.id }}">
         <div class="posted-by text-secondary small-text">
           <span class="text-secondary small-text font-weight-bold mr-1">{{ comment.user.username }}</span> {{ comment.time_since_created() }}
         </div>
@@ -30,11 +32,13 @@
           <button onclick="show_reply_box({{ comment.id }})">Reply</button>
         </div>
       </div>
-      <div class="child-container ml-5">
-        
+      <div class="children ml-3">
+        {{ traverse(node.children) }}
       </div>
     </div>
-  {% endfor %}
+    {% endfor %}
+  {%- endmacro %}
+  {{ traverse(commentTree) }}
   </div>
 </div>
 <script type="text/javascript">
