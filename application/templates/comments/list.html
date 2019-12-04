@@ -17,7 +17,7 @@
   {%- macro traverse(nodes) %}
     {%- for node in nodes  %}
       {%- set comment = node.comment %}
-    <div class="main m-1 p-2 bg-white border rounded">
+    <div class="main m-1 pt-1 pl-2 bg-white border rounded">
       <div class="comment d-flex flex-column" id="{{ comment.id }}">
         <div class="posted-by text-secondary small-text">
           <span class="text-secondary small-text font-weight-bold mr-1">{{ comment.user.username }}</span> {{ comment.time_since_created() }}
@@ -28,8 +28,15 @@
         {% endfor %}
           <p class="mb-0">{{ comment.content.split('\n')[-1] }}</p>
         </div>
-        <div>
-          <button onclick="show_reply_box({{ comment.id }})">Reply</button>
+        <div class="misc-container d-flex flex-row pt-1">
+          <div class="reply mr-1">
+              <button class="invisible p-0" onclick="show_reply_box({{ comment.id }})">
+                <div class="d-flex flex-row btn p-0 color-hover text-secondary visible">
+                  <div class="material-icons md-14 visible">reply</div>
+                  <div class="visible pb-1 pl-1 small-text font-weight-bold">Reply</div>
+                </div>
+              </button>
+          </div>
         </div>
       </div>
       <div class="children ml-3">
@@ -44,21 +51,23 @@
 <script type="text/javascript">
   const show_reply_box = (comment_id) => {
     var comment = document.getElementById(comment_id);
-    var childrenContainer = comment.nextElementSibling
-    var textnode = document.createTextNode('Water');
+    var childrenContainer = comment.nextElementSibling;
 
     var commentBox = document.getElementById('comment-box')
-                             .cloneNode(true)
-    
-    console.log(comment_id)
-    act = `{{ url_for('comments_create', post_id=post.id) }}/${comment_id}`
-    console.log(act)
-    commentBox.getElementsByTagName('form')[0].action = act
+                             .cloneNode(true);
 
-    childrenContainer.appendChild(commentBox)
+    var act = `{{ url_for('comments_create', post_id=post.id) }}/${comment_id}`;
 
-    return 0;
+    commentBox.getElementsByTagName('form')[0].action = act;
+    commentBox.id = 'reply-box';
+
+    var previousCommentBox = document.getElementById('reply-box');;
+
+    if (previousCommentBox !== null) {
+      previousCommentBox.parentNode.removeChild(previousCommentBox);
+    };
+
+    childrenContainer.prepend(commentBox);
   };
-
 </script>
 {% endblock %}
