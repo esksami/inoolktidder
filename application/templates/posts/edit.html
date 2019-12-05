@@ -8,7 +8,7 @@
   <form method="POST" action="{{ url_for('posts_edit', post_id=post.id) }}">
     <div class="my-2">
       {{ form.title.label(class_="font-weight-bold") }}
-      {{ form.title(class_="form-control", value=post.title) }}
+      {{ form.title(class_="form-control", autofocus="", value=post.title) }}
     </div>
     <div class="text-info">
       <ul>

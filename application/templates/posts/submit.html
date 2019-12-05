@@ -10,7 +10,7 @@
   <form method="POST" action="{{ url_for('posts_submit') }}">
     <div class="md-form my-2">
       {{ form.title.label(class_="font-weight-bold") }}
-      {{ form.title(class_="form-control") }}
+      {{ form.title(class_="form-control", autofocus="") }}
     </div>
     <div class="text-info">
       <ul>
