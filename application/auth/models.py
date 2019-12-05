@@ -1,6 +1,8 @@
 from application import db
 from application.models import Base
 
+from application.roles.models import Role, UserRole
+
 class User(Base):
     __tablename__ = "account"
 
@@ -24,3 +26,13 @@ class User(Base):
 
     def is_authenticated(self):
         return True
+
+    @property
+    def roles(self):
+        userRoles = (UserRole.query
+            .join(User, User.id == UserRole.account_id)
+            .join(Role, Role.id == UserRole.role_id)
+            .filter(UserRole.account_id == self.id)
+            .all())
+        
+        return [userRole.role.name for userRole in userRoles]

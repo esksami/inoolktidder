@@ -2,6 +2,7 @@ from flask import redirect, render_template, request, url_for
 from flask_login import login_required, current_user
 
 from application import app, db
+from application.utils.roles_required import roles_required
 
 from application.comments.models import Comment
 from application.comments.forms import CommentForm
@@ -14,6 +15,7 @@ from application.auth.models import User
 @app.route("/<post_id>/comments/create", defaults={'comment_id': None}, methods=["POST"])
 @app.route("/<post_id>/comments/create/<comment_id>", methods=["POST"])
 @login_required
+@roles_required('APPROVED')
 def comments_create(post_id, comment_id):
     form = CommentForm(request.form)
 

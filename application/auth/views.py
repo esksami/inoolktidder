@@ -7,6 +7,8 @@ from application import app, db
 from application.auth.models import User
 from application.auth.forms import LoginForm, SignUpForm
 
+from application.roles.models import Role, UserRole
+
 
 @app.route('/signup', methods = ['GET', 'POST'])
 def auth_signup():
@@ -33,9 +35,21 @@ def auth_signup():
         salt=salt.decode()
     )
 
-
-
     db.session().add(user)
+    db.session().commit()
+
+    # Add roles
+    user = User.query.filter_by(username=form.username.data).first()
+
+    roles = Role.query.filter(Role.name.in_(['APPROVED', 'USER'])).all()
+
+    for role in roles:
+        userRole = UserRole(
+            role_id=role.id,
+            account_id=user.id
+        )
+        db.session().add(userRole)
+
     db.session().commit()
 
     return redirect(url_for("auth_login"))

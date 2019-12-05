@@ -2,6 +2,7 @@ from flask import redirect, render_template, request, url_for
 from flask_login import login_required, current_user
 
 from application import app, db
+from application.utils.roles_required import roles_required
 
 from application.posts.models import Post
 from application.posts.forms import PostForm
@@ -39,6 +40,7 @@ def posts_submit_form():
 
 @app.route("/submit", methods=["POST"])
 @login_required
+@roles_required('APPROVED')
 def posts_submit():
     form = PostForm(request.form)
 
