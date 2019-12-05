@@ -4,6 +4,7 @@ from flask import render_template, request, redirect, url_for
 from flask_login import login_user, logout_user
   
 from application import app, db
+from application.utils import session_scope
 from application.auth.models import User
 from application.auth.forms import LoginForm, SignUpForm
 
@@ -35,22 +36,16 @@ def auth_signup():
         salt=salt.decode()
     )
 
-    db.session().add(user)
-    db.session().commit()
+    with session_scope() as session:
+        session.add(user)
+        session.flush()
 
-    # Add roles
-    user = User.query.filter_by(username=form.username.data).first()
-
-    roles = Role.query.filter(Role.name.in_(['APPROVED', 'USER'])).all()
-
-    for role in roles:
-        userRole = UserRole(
-            role_id=role.id,
-            account_id=user.id
+        roles = Role.query.filter(Role.name.in_(['APPROVED', 'USER'])).all()
+        session.bulk_save_objects(
+            [UserRole(role_id=role.id, account_id=user.id) for role in roles]
         )
-        db.session().add(userRole)
 
-    db.session().commit()
+        session.commit()
 
     return redirect(url_for("auth_login"))
 

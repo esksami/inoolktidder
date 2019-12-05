@@ -35,4 +35,6 @@ class User(Base):
             .filter(UserRole.account_id == self.id)
             .all())
         
+        print('roles:', [userRole.role.name for userRole in userRoles])
+
         return [userRole.role.name for userRole in userRoles]
