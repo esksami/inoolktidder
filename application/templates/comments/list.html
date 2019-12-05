@@ -14,9 +14,8 @@
     </form>
   </div>
   <div id="Comments">
-  {%- macro traverse(nodes) %}
-    {%- for node in nodes  %}
-      {%- set comment = node.comment %}
+  {%- macro traverse(comments) %}
+    {%- for comment in comments  %}
     <div class="main m-1 pt-1 pl-2 bg-white border rounded">
       <div class="comment d-flex flex-column" id="{{ comment.id }}">
         <div class="posted-by text-secondary small-text">
@@ -67,7 +66,7 @@
         </div>
       </div>
       <div class="children ml-3">
-        {{ traverse(node.children) }}
+        {{ traverse(comment.children) }}
       </div>
     </div>
     {% endfor %}

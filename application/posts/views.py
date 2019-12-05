@@ -11,11 +11,24 @@ from application.auth.models import User
 from application.comments.models import Comment
 from application.comments.forms import CommentForm
 
+from application.posts.utils.comment_tree import create_comment_tree
 
 
 @app.route("/", methods=["GET"])
 def posts_index():
-    posts = db.session().query(Post).join(User, User.id == Post.account_id).all()
+    response = (db.session()
+          .query(Post, db.func.count(Comment.post_id))
+          .join(User, User.id == Post.account_id)
+          .outerjoin(Comment, Comment.post_id == Post.id)
+          .group_by(Post.id)
+          .all())
+
+    posts = []
+
+    for post, commentCount in response:
+        post.comments = commentCount
+
+        posts.append(post)
 
     return render_template("posts/list.html", posts=posts)
 
@@ -92,14 +105,22 @@ def posts_delete(post_id):
 
 @app.route("/<post_id>/")
 def posts_details(post_id):
-    comments = Comment.query.filter(Comment.post_id == post_id).join(User, User.id == Comment.account_id).all()
-    commentTree = comment_tree(comments)
+    post, post.comments = (db.session()
+        .query(Post, db.func.count(Comment.post_id))
+        .join(User, User.id == Post.account_id)
+        .outerjoin(Comment, Comment.post_id == Post.id)
+        .filter(Post.id == post_id)
+        .first())
+
+    comments = (Comment.query
+        .filter(Comment.post_id == post_id)
+        .join(User, User.id == Comment.account_id)
+        .all())
 
     return render_template(
         "posts/details.html",
-        post=Post.query.get(post_id),
-        comments=comments,
-        commentTree=commentTree,
+        post=post,
+        commentTree=create_comment_tree(comments),
         form=CommentForm()
     )
 
@@ -112,51 +133,3 @@ def posts_like(post_id):
 
     return redirect(url_for("posts_index"))
 
-def comment_tree(comments):
-    commentsByParentId = comments_by_parent_id(comments)
-    roots = []
-
-    for rootComment in [c for c in comments if c.parent_id is None]:
-        root = CommentNode(
-            comment=rootComment,
-            **rootComment.__dict__)
-        print(root.__dict__)
-        root.children = populate(root, commentsByParentId)
-
-        roots.append(root)
-
-    return roots
-
-def populate(node, commentsByParentId):
-    try:
-        comments = commentsByParentId[node.id]
-    except KeyError:
-        return []
-
-    children = []
-
-    for comment in comments:
-        node = CommentNode(
-            comment=comment,
-            **comment.__dict__)
-        node.children = populate(node, commentsByParentId)
-
-        children.append(node)
-
-    return children
-
-from itertools import groupby
-
-def comments_by_parent_id(comments):
-    childComments = [c for c in comments if c.parent_id is not None]
-    sortedComments = sorted(childComments, key=lambda c: c.parent_id)
-    groups = groupby(sortedComments, key=lambda c: c.parent_id)
-    return {parent_id: list(children) for parent_id, children in groups}
-
-class CommentNode:
-    def __init__(self, comment, children = [], **kwargs):
-        self.comment = comment
-        self.children = children
-
-        for key, value in kwargs.items():
-          setattr(self, key, value)
