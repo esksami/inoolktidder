@@ -3,7 +3,8 @@ Tietokantasovellus, 2019
 
 # Kuvaus
 
-Reddit-tyylinen julkinen keskustelufoorumi, jossa kuka tahansa rekisteröitynyt kättäjä voi luoda postauksia sekä kommentoida niihin tai antaa "tykkäyksiä". Postaukset voidaan näyttää siinä järjestyksessä missä ne ovat luotu tai (oletusarvoisesti) sen perusteella kuinka suosittuja ne ovat. Postauksia voi myös etsiä tietokannasta.
+Reddit-tyylinen julkinen keskustelufoorumi, jossa kuka tahansa sisään kirjautunut käyttäjä voi luoda postauksia sekä kommentoida niihin ja antaa niille tykkäyksiä. Postaukset näytetään listamuodossa heti etusivulla. Postauksia voi luonnollisesti klikata, jotta saadaan näkyviin niiden sisältö ja niihin luodut kommentit. Kommentteja voi luoda myös vastauksena muihin kommentteihin, jolloin niistä muodostuu esitysmuotonsa ansiosta kommenttiketjuja.
+
 
 
 # Heroku-demo
