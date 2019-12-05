@@ -109,6 +109,7 @@ def posts_details(post_id):
         .query(Post, db.func.count(Comment.post_id))
         .join(User, User.id == Post.account_id)
         .outerjoin(Comment, Comment.post_id == Post.id)
+        .group_by(Post.id)
         .filter(Post.id == post_id)
         .first())
 
