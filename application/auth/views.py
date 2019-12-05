@@ -18,6 +18,10 @@ def auth_signup():
     if not form.validate():
         return render_template('auth/signup.html', form=form)
     
+    user = User.query.filter_by(username=form.username.data).first()
+
+    if user:
+        return render_template('auth/signup.html', form=form, error='Username is taken')
 
     password = form.password.data.encode()
     salt = bcrypt.gensalt(rounds=16)
@@ -28,6 +32,8 @@ def auth_signup():
         phash=phash.decode(),
         salt=salt.decode()
     )
+
+
 
     db.session().add(user)
     db.session().commit()
