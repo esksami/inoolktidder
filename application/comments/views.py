@@ -6,6 +6,8 @@ from application import app, db
 from application.comments.models import Comment
 from application.comments.forms import CommentForm
 
+from application.posts.models import Post
+
 from application.auth.models import User
 
 
@@ -27,3 +29,18 @@ def comments_create(post_id, comment_id):
     db.session().commit()
 
     return redirect(url_for("posts_details", post_id=post_id))
+
+@app.route("/comments/delete/<comment_id>/", methods=["POST"])
+@login_required
+def comments_delete(comment_id):
+    print('DELETING COMMENT')
+    comment = Comment.query.get(comment_id)
+
+    if comment.account_id != current_user.id:
+        return redirect(url_for("posts_details", post_id=comment.post_id))
+
+    comment.deleted = True
+
+    db.session().commit()
+
+    return redirect(url_for("posts_details", post_id=comment.post_id))

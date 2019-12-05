@@ -8,13 +8,15 @@ from datetime import datetime
 
 
 class Comment(Base):
-    content = db.Column(db.String(4096), nullable=False)
-    account_id = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
+    content = db.Column(db.String(4096))
+    account_id = db.Column(db.Integer, db.ForeignKey('account.id'))
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
     parent_id = db.Column(db.Integer, db.ForeignKey('comment.id'))
-    
+    deleted = db.Column(db.Boolean, default=False)
+
     user = relationship("User", backref="Comment")
     comment = relationship("Comment")
+
 
     def __init__(self, content):
         self.content = content
