@@ -87,14 +87,12 @@ def posts_delete(post_id):
 
     db.session().delete(post)
     db.session().commit()
-  
+
     return redirect(url_for("posts_index"))
 
 @app.route("/<post_id>/")
 def posts_details(post_id):
-    comments = Comment.query.filter(Comment.post_id == Post.id).join(User, User.id == Comment.account_id).all()
-    print(comments[0].__dict__)
-
+    comments = Comment.query.filter(Comment.post_id == post_id).join(User, User.id == Comment.account_id).all()
     commentTree = comment_tree(comments)
 
     return render_template(
@@ -113,7 +111,6 @@ def posts_like(post_id):
     db.session().commit()
 
     return redirect(url_for("posts_index"))
-
 
 def comment_tree(comments):
     commentsByParentId = comments_by_parent_id(comments)
@@ -156,7 +153,6 @@ def comments_by_parent_id(comments):
     groups = groupby(sortedComments, key=lambda c: c.parent_id)
     return {parent_id: list(children) for parent_id, children in groups}
 
-
 class CommentNode:
     def __init__(self, comment, children = [], **kwargs):
         self.comment = comment
@@ -164,10 +160,3 @@ class CommentNode:
 
         for key, value in kwargs.items():
           setattr(self, key, value)
-
-
-def traverse(node):
-    for child in node.children:
-        traverse(child)
-
-    return
