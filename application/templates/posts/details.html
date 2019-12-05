@@ -34,7 +34,7 @@
         </div>
         <div class="misc-container d-flex flex-row">
           <div class="comments mr-3">
-            <a class="invisible" href="/">
+            <a class="invisible" href="{{ url_for('posts_details', post_id=post.id) }}#Comments">
               <button class="invisible p-0" type="submit">
                 <div class="d-flex flex-row btn p-0 color-hover visible">
                   <div class="material-icons md-18 visible">forum</div>
