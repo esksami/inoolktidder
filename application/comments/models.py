@@ -12,7 +12,7 @@ class Comment(Base):
     account_id = db.Column(db.Integer, db.ForeignKey('account.id'))
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
     parent_id = db.Column(db.Integer, db.ForeignKey('comment.id'))
-    deleted = db.Column(db.Boolean, default=False)
+    deleted = db.Column(db.Boolean, default=False, nullable=False)
 
     user = relationship("User", backref="Comment")
     comment = relationship("Comment")
