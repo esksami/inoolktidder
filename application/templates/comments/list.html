@@ -28,7 +28,7 @@
             {{ comment.user.username }}
           </span>
         {% endif %}
-        {{ comment.time_since_created() }}
+        {{ comment.time_since_created_str() }}
         </div>
         <div class="content-container">
         {% if comment.deleted %}

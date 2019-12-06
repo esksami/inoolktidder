@@ -1,13 +1,11 @@
 from application import db
-from application.models import Base
+from application.models import Base, TimestampMixin
 
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, column_property
 from sqlalchemy.sql import text
 
-from datetime import datetime
 
-
-class Post(Base):
+class Post(Base, TimestampMixin):
     title = db.Column(db.String(512), nullable=False)
     content = db.Column(db.String(8192), nullable=False)
     likes = db.Column(db.Integer, default=0)
@@ -15,7 +13,7 @@ class Post(Base):
     account_id = db.Column(db.Integer, db.ForeignKey('account.id'),
                            nullable=False)
 
-    user = relationship("User", backref="Post")
+    user = relationship("User", backref="post")
 
     def __init__(self, title, content):
         self.title = title
@@ -33,3 +31,5 @@ class Post(Base):
             return row[0]
 
         return 0
+
+    

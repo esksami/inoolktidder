@@ -34,6 +34,7 @@ def posts_index(page=1, per_page=10):
 
         for post, commentCount in response.items:
             post.comments = commentCount
+            print('hello', post.seconds_since_created)
 
             posts.append(post)
 
