@@ -1,4 +1,4 @@
-from flask import redirect, render_template, request, url_for
+from flask import redirect, render_template, request, url_for, request
 from flask_login import login_required, current_user
 
 from application import app, db
@@ -15,25 +15,38 @@ from application.comments.forms import CommentForm
 
 from application.posts.utils.comment_tree import create_comment_tree
 
+from contextlib import suppress
 
 @app.route("/", methods=["GET"])
-def posts_index():
+def posts_index(page=1, per_page=10):
+    with suppress(KeyError):
+        page = int(request.args['page'])
+
     with session_scope() as session:
         response = (session
               .query(Post, db.func.count(Comment.post_id))
               .join(User, User.id == Post.account_id)
               .outerjoin(Comment, Comment.post_id == Post.id)
               .group_by(Post.id)
-              .all())
+              .paginate(page=page, per_page=per_page, max_per_page=50))
 
         posts = []
 
-        for post, commentCount in response:
+        for post, commentCount in response.items:
             post.comments = commentCount
 
             posts.append(post)
 
-        return render_template("posts/list.html", posts=posts)
+        first = max(1, response.page - 2)
+        last = min(response.pages, response.page + 2) + 1
+        page_range = list(range(first, last))
+
+        return render_template(
+            "posts/list.html",
+            posts=posts,
+            page_range=page_range,
+            pagination=response
+        )
 
 @app.route("/submit")
 @login_required
