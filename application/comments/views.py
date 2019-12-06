@@ -2,7 +2,8 @@ from flask import redirect, render_template, request, url_for
 from flask_login import login_required, current_user
 
 from application import app, db
-from application.utils.roles_required import roles_required
+from application.utils import session_scope
+from application.utils import roles_required
 
 from application.comments.models import Comment
 from application.comments.forms import CommentForm
@@ -27,15 +28,15 @@ def comments_create(post_id, comment_id):
     comment.post_id = post_id
     comment.parent_id = comment_id
 
-    db.session().add(comment)
-    db.session().commit()
+    with session_scope() as session:
+        session.add(comment)
+        session.commit()
 
     return redirect(url_for("posts_details", post_id=post_id))
 
 @app.route("/comments/delete/<comment_id>/", methods=["POST"])
 @login_required
 def comments_delete(comment_id):
-    print('DELETING COMMENT')
     comment = Comment.query.get(comment_id)
 
     if comment.account_id != current_user.id:
@@ -43,6 +44,7 @@ def comments_delete(comment_id):
 
     comment.deleted = True
 
-    db.session().commit()
+    with session_scope() as session:
+        session.commit()
 
     return redirect(url_for("posts_details", post_id=comment.post_id))

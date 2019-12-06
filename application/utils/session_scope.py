@@ -4,8 +4,8 @@ from contextlib import contextmanager
 from application import db
 
 @contextmanager
-def session_scope():
-    session = db.session()
+def session_scope(*args, **kwargs):
+    session = db.session(*args, **kwargs)
     try:
         yield session
         session.commit()

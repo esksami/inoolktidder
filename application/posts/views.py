@@ -2,7 +2,8 @@ from flask import redirect, render_template, request, url_for
 from flask_login import login_required, current_user
 
 from application import app, db
-from application.utils.roles_required import roles_required
+from application.utils import session_scope
+from application.utils import roles_required
 
 from application.posts.models import Post
 from application.posts.forms import PostForm
@@ -17,21 +18,22 @@ from application.posts.utils.comment_tree import create_comment_tree
 
 @app.route("/", methods=["GET"])
 def posts_index():
-    response = (db.session()
-          .query(Post, db.func.count(Comment.post_id))
-          .join(User, User.id == Post.account_id)
-          .outerjoin(Comment, Comment.post_id == Post.id)
-          .group_by(Post.id)
-          .all())
+    with session_scope() as session:
+        response = (session
+              .query(Post, db.func.count(Comment.post_id))
+              .join(User, User.id == Post.account_id)
+              .outerjoin(Comment, Comment.post_id == Post.id)
+              .group_by(Post.id)
+              .all())
 
-    posts = []
+        posts = []
 
-    for post, commentCount in response:
-        post.comments = commentCount
+        for post, commentCount in response:
+            post.comments = commentCount
 
-        posts.append(post)
+            posts.append(post)
 
-    return render_template("posts/list.html", posts=posts)
+        return render_template("posts/list.html", posts=posts)
 
 @app.route("/submit")
 @login_required
@@ -47,11 +49,12 @@ def posts_submit():
     if not form.validate():
         return render_template("posts/submit.html", form=form)
 
-    post = Post(form.title.data, form.content.data)
-    post.account_id = current_user.id
+    with session_scope() as session:
+        post = Post(form.title.data, form.content.data)
+        post.account_id = current_user.id
 
-    db.session().add(post)
-    db.session().commit()
+        session.add(post)
+        session.commit()
   
     return redirect(url_for("posts_index"))
 
@@ -65,14 +68,14 @@ def posts_edit_form(post_id):
                         error="You can only edit your own posts.")
 
     return render_template("posts/edit.html",
-                           post=Post.query.get(post_id),
+                           post=post,
                            form=PostForm())
 
 @app.route("/edit/<post_id>/", methods=["POST"])
 @login_required
 def posts_edit(post_id):
     form = PostForm(request.form)
-
+    
     post = Post.query.get(post_id)
 
     if post.account_id != current_user.id:
@@ -85,54 +88,64 @@ def posts_edit(post_id):
     post.content = form.content.data
 
     if not form.validate():
-        return render_template("posts/edit.html", post=post, form=form)
+        return render_template(
+            "posts/edit.html",
+            post=post,
+            form=form
+        )
 
-    db.session().commit()
+    with session_scope() as session:
+        session.commit()
   
     return redirect(url_for("posts_details", post_id=post_id))
 
 @app.route("/delete/<post_id>/", methods=["POST"])
 @login_required
 def posts_delete(post_id):
-    post = Post.query.get(post_id)
+    with session_scope() as session:
+        post = Post.query.get(post_id)
 
-    if post.account_id != current_user.id:
-        return render_template("posts/details.html", post=post,
-                        error="You can't delete someone elses post.")
+        if post.account_id != current_user.id:
+            return render_template("posts/details.html", post=post,
+                            error="You can't delete someone elses post.")
 
-    db.session().delete(post)
-    db.session().commit()
+        session.delete(post)
+        session.commit()
 
     return redirect(url_for("posts_index"))
 
 @app.route("/<post_id>/")
 def posts_details(post_id):
-    post, post.comments = (db.session()
-        .query(Post, db.func.count(Comment.post_id))
-        .join(User, User.id == Post.account_id)
-        .outerjoin(Comment, Comment.post_id == Post.id)
-        .group_by(Post.id)
-        .filter(Post.id == post_id)
-        .first())
+    with session_scope() as session:
+        post, post.comments = (session
+            .query(Post, db.func.count(Comment.post_id))
+            .join(User, User.id == Post.account_id)
+            .outerjoin(Comment, Comment.post_id == Post.id)
+            .group_by(Post.id)
+            .filter(Post.id == post_id)
+            .first())
 
-    comments = (Comment.query
-        .filter(Comment.post_id == post_id)
-        .join(User, User.id == Comment.account_id)
-        .all())
+        comments = (session
+            .query(Comment)
+            .filter(Comment.post_id == post_id)
+            .join(User, User.id == Comment.account_id)
+            .all())
 
-    return render_template(
-        "posts/details.html",
-        post=post,
-        commentTree=create_comment_tree(comments),
-        form=CommentForm()
-    )
+        return render_template(
+            "posts/details.html",
+            post=post,
+            commentTree=create_comment_tree(comments),
+            form=CommentForm()
+        )
 
 @app.route("/posts/<post_id>/", methods=["POST"])
 @login_required
 def posts_like(post_id):
     post = Post.query.get(post_id)
     post.likes += 1
-    db.session().commit()
+
+    with session_scope() as session:
+        session.commit()
 
     return redirect(url_for("posts_index"))
 
