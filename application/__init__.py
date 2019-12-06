@@ -14,7 +14,6 @@ else:
 
 db = SQLAlchemy(app)
 
-from application.auth.models import User
 from os import urandom
 app.config["SECRET_KEY"] = urandom(32)
 
@@ -28,7 +27,6 @@ login_manager.login_message = "Please login to use this functionality."
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(user_id)
-
 
 from application.posts import models
 from application.posts import views
