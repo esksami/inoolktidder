@@ -74,17 +74,37 @@
       <div class="d-flex flex-column px-1"
            style="min-width: 50px;">
         <div class="mx-auto mb-n3 text-center">
-          <form method="POST" action="{{ url_for('posts_like', post_id=post.id) }}">
+        {% if post.likeValue.name == "like" %}
+          <form method="POST" action="{{ url_for('posts_undo_like', post_id=post.id) }}">
             <button class="invisible p-0" type="submit">
-              <i class="material-icons font-weight-bold visible">arrow_drop_up</i>
+              <span class="material-icons font-weight-bold visible text-success">arrow_drop_up</span>
             </button>
           </form>
+        {% else %}
+          <form method="POST" action="{{ url_for('posts_like', post_id=post.id) }}">
+            <button class="invisible p-0" type="submit">
+              <span class="material-icons font-weight-bold visible">arrow_drop_up</span>
+            </button>
+          </form>
+        {% endif %}
         </div>
         <div class="mx-auto text-center">
-          <span class="font-weight-bold">{{ post.likes }}</span>
+          <span title="{{ post.likes }} - {{ post.dislikes }}" class="font-weight-bold">{{ post.likes - post.dislikes }}</span>
         </div>
         <div class="mx-auto mt-n2 text-center">
-          <i class="material-icons font-weight-bold">arrow_drop_down</i>
+        {% if post.likeValue.name == "dislike" %}
+          <form method="POST" action="{{ url_for('posts_undo_dislike', post_id=post.id) }}">
+            <button class="invisible p-0" type="submit">
+              <span class="material-icons font-weight-bold visible text-danger">arrow_drop_down</span>
+            </button>
+          </form>
+        {% else %}
+          <form method="POST" action="{{ url_for('posts_dislike', post_id=post.id) }}">
+            <button class="invisible p-0" type="submit">
+              <span class="material-icons font-weight-bold visible">arrow_drop_down</span>
+            </button>
+          </form>
+        {% endif %}
         </div>
       </div>
       <!-- Posted by, Title, Comment amount -->
