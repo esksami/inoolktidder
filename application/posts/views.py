@@ -17,17 +17,19 @@ from application.posts.utils.comment_tree import create_comment_tree
 
 from contextlib import suppress
 
-from sqlalchemy import and_, or_
+from sqlalchemy import and_, or_, asc, desc, text
 from sqlalchemy.orm import aliased
 
-from application.posts.query import PostQuery
-
+from application.posts.query import posts_with_aggregates
 
 
 @app.route("/", methods=["GET"])
-def posts_index(page=1, per_page=10):
+def posts_index(page=1, per_page=10, sort='popular'):
     with suppress(KeyError):
         page = int(request.args['page'])
+
+    with suppress(KeyError):
+        sort = request.args['sort']
 
     user_id = None
 
@@ -35,7 +37,7 @@ def posts_index(page=1, per_page=10):
         user_id = current_user.id        
 
     with session_scope() as session:
-        query = PostQuery.all(session, user_id=user_id)
+        query = posts_with_aggregates(session, user_id=user_id)
 
         with suppress(KeyError):
             string = request.args['query']
@@ -44,6 +46,14 @@ def posts_index(page=1, per_page=10):
                 or_(Post.title.ilike('%{0}%'.format(string)),
                     Post.content.ilike('%{0}%'.format(string)))
             )
+
+        if sort == 'newest':
+            query = query.order_by(desc(Post.date_created))
+        elif sort == 'oldest':
+            query = query.order_by(asc(Post.date_created))
+        elif sort == 'popular':
+            query = query.order_by(desc(text('likes - dislikes')))
+
 
         response = query.paginate(
             page=page, per_page=per_page, max_per_page=50
@@ -153,7 +163,8 @@ def posts_details(post_id):
         user_id = current_user.id 
 
     with session_scope() as session:
-        query = PostQuery.all(session, user_id=user_id).filter(Post.id == post_id)
+        query = (posts_with_aggregates(session, user_id=user_id)
+            .filter(Post.id == post_id))
         response = query.first()
 
         (post,
