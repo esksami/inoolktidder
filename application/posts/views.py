@@ -218,7 +218,7 @@ def posts_details(post_id):
         comments = (session
             .query(Comment)
             .filter(Comment.post_id == post_id)
-            .join(User, User.id == Comment.account_id)
+            .outerjoin(User, User.id == Comment.account_id)
             .all())
 
         return render_template(
