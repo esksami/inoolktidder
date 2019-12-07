@@ -160,7 +160,7 @@ def posts_details(post_id):
          post.comments,
          post.likes,
          post.dislikes,
-         post.likeValue) = response
+         post.userLike) = response
 
         comments = (session
             .query(Comment)
