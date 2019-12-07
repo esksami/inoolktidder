@@ -19,7 +19,9 @@ from contextlib import suppress
 
 from sqlalchemy import and_, or_
 from sqlalchemy.orm import aliased
-from sqlalchemy.sql.expression import bindparam, literal_column
+
+from application.posts.query import PostQuery
+
 
 
 @app.route("/", methods=["GET"])
@@ -32,53 +34,26 @@ def posts_index(page=1, per_page=10):
     if current_user and current_user.is_authenticated:
         user_id = current_user.id        
 
-    postLikes = aliased(PostLike)
-    postDislikes = aliased(PostLike)
-    userLike = aliased(PostLike)
-
     with session_scope() as session:
-        postCommentCount = (session
-            .query(Post.id.label('post_id'),
-                   db.func.count(Comment.post_id).label('comments'))
-            .outerjoin(Comment, Comment.post_id == Post.id)
-            .group_by(Post.id)).subquery()
-
-        Post.likes = db.func.count(postLikes.value).label('post_likes')
-
-        response = (session
-            .query(Post,
-                   postCommentCount.c.comments.label('post_comments'),
-                   db.func.count(postLikes.value).label('post_likes'),
-                   db.func.count(postDislikes.value),
-                   userLike.value)
-            .outerjoin(User, User.id == Post.account_id)
-            .outerjoin(postCommentCount, postCommentCount.c.post_id == Post.id)
-            .outerjoin(postLikes,
-                       and_(postLikes.post_id == Post.id,
-                            postLikes.value == PostLikeValue.like))
-            .outerjoin(postDislikes,
-                       and_(postDislikes.post_id == Post.id,
-                            postDislikes.value == PostLikeValue.dislike))
-            .outerjoin(userLike,
-                       and_(userLike.post_id == Post.id,
-                            userLike.account_id == user_id))
-            .group_by(Post.id))
+        query = PostQuery.all(session, user_id=user_id)
 
         with suppress(KeyError):
-            query = request.args['query']
+            string = request.args['query']
 
-            response = response.filter(
-                or_(Post.title.ilike('%{0}%'.format(query)),
-                    Post.content.ilike('%{0}%'.format(query)))
+            query = query.filter(
+                or_(Post.title.ilike('%{0}%'.format(string)),
+                    Post.content.ilike('%{0}%'.format(string)))
             )
 
-        response = response.paginate(page=page, per_page=per_page, max_per_page=50)
+        response = query.paginate(
+            page=page, per_page=per_page, max_per_page=50
+        )
 
         posts = [post for post,
                           post.comments,
                           post.likes,
                           post.dislikes,
-                          post.likeValue in response.items]
+                          post.userLike in response.items]
 
         first = max(1, response.page - 2)
         last = min(response.pages, response.page + 2) + 1
@@ -177,37 +152,9 @@ def posts_details(post_id):
     if current_user and current_user.is_authenticated:
         user_id = current_user.id 
 
-    postLikes = aliased(PostLike)
-    postDislikes = aliased(PostLike)
-    userLike = aliased(PostLike)
-
     with session_scope() as session:
-        postCommentCount = (session
-            .query(Post.id.label('post_id'),
-                 db.func.count(Comment.post_id).label('comments'))
-            .outerjoin(Comment, Comment.post_id == Post.id)
-            .group_by(Post.id)).subquery()
-
-        response = (session
-            .query(Post,
-                   postCommentCount.c.comments,
-                   db.func.count(postLikes.value),
-                   db.func.count(postDislikes.value),
-                   userLike.value)
-            .outerjoin(User, User.id == Post.account_id)
-            .outerjoin(postCommentCount, postCommentCount.c.post_id == Post.id)
-            .outerjoin(postLikes,
-                       and_(postLikes.post_id == Post.id,
-                            postLikes.value == PostLikeValue.like))
-            .outerjoin(postDislikes,
-                       and_(postDislikes.post_id == Post.id,
-                            postDislikes.value == PostLikeValue.dislike))
-            .outerjoin(userLike,
-                       and_(userLike.post_id == Post.id,
-                            userLike.account_id == user_id))
-            .group_by(Post.id)
-            .filter(Post.id == post_id)
-            .first())
+        query = PostQuery.all(session, user_id=user_id).filter(Post.id == post_id)
+        response = query.first()
 
         (post,
          post.comments,

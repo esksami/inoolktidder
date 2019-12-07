@@ -24,19 +24,6 @@ class Post(Base, TimestampMixin):
         self.title = title
         self.content = content
 
-    @staticmethod
-    def user_post_count(user_id):
-        stmt = text(
-            'SELECT count(*) FROM Post WHERE Post.account_id = :user_id'
-        ).params(user_id=user_id)
-
-        response = db.engine.execute(stmt)
-
-        for row in response:
-            return row[0]
-
-        return 0
-
 class PostLikeValue(enum.Enum):
     dislike = -1
     like = 1

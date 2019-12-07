@@ -74,7 +74,7 @@
     <div class="d-flex flex-column px-1"
          style="min-width: 50px;">
       <div class="mx-auto mb-n3 text-center">
-      {% if post.likeValue.name == "like" %}
+      {% if post.userLike.name == "like" %}
         <form method="POST" action="{{ url_for('posts_undo_like', post_id=post.id) }}">
           <button class="invisible p-0" type="submit">
             <span class="material-icons font-weight-bold visible text-success">arrow_drop_up</span>
@@ -92,7 +92,7 @@
         <span title="{{ post.likes }} - {{ post.dislikes }}" class="font-weight-bold">{{ post.likes - post.dislikes }}</span>
       </div>
       <div class="mx-auto mt-n2 text-center">
-      {% if post.likeValue.name == "dislike" %}
+      {% if post.userLike.name == "dislike" %}
         <form method="POST" action="{{ url_for('posts_undo_dislike', post_id=post.id) }}">
           <button class="invisible p-0" type="submit">
             <span class="material-icons font-weight-bold visible text-danger">arrow_drop_down</span>
@@ -108,9 +108,6 @@
       </div>
     </div>
     <!-- Posted by, Title, Comment amount -->
-<!--       <div class="d-flex flex-column">
-      
-    </div> -->
     <div class="flex-grow-1 my-auto pt-1 pl-1 pr-1">
       <!-- posted by -->
       <div class="posted-by text-secondary small-text">
