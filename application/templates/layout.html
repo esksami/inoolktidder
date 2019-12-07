@@ -27,12 +27,14 @@
         </form>
       </div>
     {% if current_user.is_authenticated %}
-      <span class="ml-auto">
-        Logged in as <span class="text-info font-weight-bold">{{ current_user.username }}</span>.
-      </span>
-      <a class="nav-link" href="{{ url_for('auth_logout') }}">
-        Log out.
-      </a>
+      <div class="d-flex flex-row">
+        <span class="nav-link px-0">
+          Logged in as <span class="text-info font-weight-bold">{{ current_user.username }}</span>.
+        </span>
+        <a class="nav-link" href="{{ url_for('auth_logout') }}">
+          Log out.
+        </a>
+      </div>
     {% else %}
       <div class="d-flex flex-row">
         <div class="border-right">
