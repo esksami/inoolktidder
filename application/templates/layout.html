@@ -12,6 +12,20 @@
       <a class="navbar-brand" href="/">
         <h1>Tidder</h1>
       </a>
+      <div class="ml-auto">
+        <form onsubmit="return false;">
+          <div class="d-flex flex-row">
+            <button type="submit" class="invisible p-0" onclick="search()">
+              <div class="d-flex flex-row btn p-0 color-hover text-secondary material-icons visible mb-n3">
+                search
+              </div>
+            </button>
+            <div class="border-bottom mr-3 mb-0">
+              <input id="search-bar" class="form-control form-control-md ml-1 pb-0 border-0 border-bottom" style="box-shadow: none" type="text" placeholder="Search" aria-label="Search">
+            </div>
+          </div>
+        </form>
+      </div>
     {% if current_user.is_authenticated %}
       <span class="ml-auto">
         Logged in as <span class="text-info font-weight-bold">{{ current_user.username }}</span>.
@@ -46,5 +60,14 @@
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      const search = () => {
+        var searchBar = document.getElementById("search-bar")
+
+        window.location.assign(
+          `{{ url_for('posts_index') }}?query=${searchBar.value}`
+        )
+      };
+    </script>
   </body>
 </html>

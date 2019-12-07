@@ -17,7 +17,7 @@ from application.posts.utils.comment_tree import create_comment_tree
 
 from contextlib import suppress
 
-from sqlalchemy import and_
+from sqlalchemy import and_, or_
 from sqlalchemy.orm import aliased
 from sqlalchemy.sql.expression import bindparam, literal_column
 
@@ -43,10 +43,12 @@ def posts_index(page=1, per_page=10):
             .outerjoin(Comment, Comment.post_id == Post.id)
             .group_by(Post.id)).subquery()
 
+        Post.likes = db.func.count(postLikes.value).label('post_likes')
+
         response = (session
             .query(Post,
-                   postCommentCount.c.comments,
-                   db.func.count(postLikes.value),
+                   postCommentCount.c.comments.label('post_comments'),
+                   db.func.count(postLikes.value).label('post_likes'),
                    db.func.count(postDislikes.value),
                    userLike.value)
             .outerjoin(User, User.id == Post.account_id)
@@ -60,11 +62,19 @@ def posts_index(page=1, per_page=10):
             .outerjoin(userLike,
                        and_(userLike.post_id == Post.id,
                             userLike.account_id == user_id))
-            .group_by(Post.id)
-            .paginate(page=page, per_page=per_page, max_per_page=50))
+            .group_by(Post.id))
 
+        with suppress(KeyError):
+            query = request.args['query']
+            print('We have found a query:', query)
+            print('\n'*4)
 
-        response = response
+            response = response.filter(
+                or_(Post.title.ilike('%{0}%'.format(query)),
+                    Post.content.ilike('%{0}%'.format(query)))
+            )
+
+        response = response.paginate(page=page, per_page=per_page, max_per_page=50)
 
         posts = [post for post,
                           post.comments,
@@ -82,6 +92,11 @@ def posts_index(page=1, per_page=10):
             page_range=page_range,
             pagination=response
         )
+
+# @app.route("/search", methods=["GET"])
+# def search_page():
+#     return render_template("posts/search.html")
+
 
 @app.route("/submit")
 @login_required
@@ -245,7 +260,6 @@ def posts_like(post_id):
 
     return redirect(url_for("posts_index"))
 
-
 @app.route("/posts/unlike/<post_id>/", methods=["POST"])
 @login_required
 def posts_undo_like(post_id):
@@ -262,7 +276,6 @@ def posts_undo_like(post_id):
         session.commit()
 
     return redirect(url_for("posts_index"))
-
 
 @app.route("/posts/dislike/<post_id>/", methods=["POST"])
 @login_required
@@ -288,7 +301,6 @@ def posts_dislike(post_id):
         session.commit()
 
     return redirect(url_for("posts_index"))
-
 
 @app.route("/posts/undislike/<post_id>/", methods=["POST"])
 @login_required
