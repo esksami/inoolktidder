@@ -32,7 +32,7 @@ def comments_create(post_id, comment_id):
         session.add(comment)
         session.commit()
 
-    return redirect(url_for("posts_details", post_id=post_id))
+        return redirect(f'{url_for("posts_details", post_id=post_id)}#{comment.id}')
 
 @app.route("/comments/delete/<comment_id>/", methods=["POST"])
 @login_required

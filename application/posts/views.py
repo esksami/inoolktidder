@@ -66,8 +66,6 @@ def posts_index(page=1, per_page=10):
 
         with suppress(KeyError):
             query = request.args['query']
-            print('We have found a query:', query)
-            print('\n'*4)
 
             response = response.filter(
                 or_(Post.title.ilike('%{0}%'.format(query)),
@@ -92,11 +90,6 @@ def posts_index(page=1, per_page=10):
             page_range=page_range,
             pagination=response
         )
-
-# @app.route("/search", methods=["GET"])
-# def search_page():
-#     return render_template("posts/search.html")
-
 
 @app.route("/submit")
 @login_required
@@ -258,7 +251,7 @@ def posts_like(post_id):
         session.add(newLike)
         session.commit()
 
-    return redirect(url_for("posts_index"))
+    return redirect(request.referrer)
 
 @app.route("/posts/unlike/<post_id>/", methods=["POST"])
 @login_required
@@ -269,13 +262,13 @@ def posts_undo_like(post_id):
         .first())
 
     if not post_like:
-        return redirect(url_for("posts_index"))
+        return redirect(request.referrer)
 
     with session_scope() as session:
         session.delete(post_like)
         session.commit()
 
-    return redirect(url_for("posts_index"))
+    return redirect(request.referrer)
 
 @app.route("/posts/dislike/<post_id>/", methods=["POST"])
 @login_required
@@ -300,7 +293,7 @@ def posts_dislike(post_id):
         session.add(newDislike)
         session.commit()
 
-    return redirect(url_for("posts_index"))
+    return redirect(request.referrer)
 
 @app.route("/posts/undislike/<post_id>/", methods=["POST"])
 @login_required
@@ -311,10 +304,10 @@ def posts_undo_dislike(post_id):
         .first())
 
     if not post_dislike:
-        return redirect(url_for("posts_index"))
+        return redirect(request.referrer)
 
     with session_scope() as session:
         session.delete(post_dislike)
         session.commit()
 
-    return redirect(url_for("posts_index"))
+    return redirect(request.referrer)
