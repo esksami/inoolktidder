@@ -12,6 +12,8 @@ from application.auth.forms import LoginForm, SignUpForm, UsernameForm, Password
 
 from application.roles.models import Role, UserRole
 
+from application.posts.models import PostLike
+
 from contextlib import suppress
 
 @app.route('/profile', methods = ['GET'])
@@ -105,14 +107,25 @@ def user_edit_password():
 
     return redirect(url_for('user_profile'))
 
+@app.route("/profile/delete", methods=["GET", "POST"])
+@login_required
+def user_delete():
+    if request.method == 'GET':
+        return redirect(url_for('user_profile'))
 
+    with session_scope() as session:
+        user = User.query.get(current_user.id)
 
+        (session.query(PostLike)
+            .filter(PostLike.account_id == current_user.id)
+            .delete())
+        session.delete(user)
 
-# @app.route('/profile/edit_username', methods = ['GET'])
-# @login_required
-# def user_edit_username_form():
-#     return render_template('auth/edit_username.html', form=UsernameForm())
+        session.commit()
 
+    logout_user()
+
+    return redirect(url_for("posts_index"))
 
 @app.route('/signup', methods = ['GET', 'POST'])
 def auth_signup():

@@ -34,7 +34,5 @@ class User(Base):
             .join(Role, Role.id == UserRole.role_id)
             .filter(UserRole.account_id == self.id)
             .all())
-        
-        print('roles:', [userRole.role.name for userRole in userRoles])
 
         return [userRole.role.name for userRole in userRoles]

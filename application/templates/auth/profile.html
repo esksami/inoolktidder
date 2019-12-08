@@ -15,7 +15,7 @@
         </div>
       </button>
     </div>
-    <div id="username-form" class="bg-white" style="min-width: 320px; max-width: 420px; display: none;">
+    <div id="username-form" class="bg-white my-2" style="min-width: 320px; max-width: 420px; display: none;">
       <form class="form-signin" method="POST" action="{{ url_for('user_edit_username') }}">
         <div class="my-2">
           {{ usernameForm.username.label(class_="sr-only") }}
@@ -44,38 +44,52 @@
     </ul>
   </div>
 {% endif %}
-<div id="password-form" class="bg-white mt-3" style="min-width: 320px; max-width: 420px">
-  <h3>Set new password</h3>
-  <form class="form-signin" method="POST" action="{{ url_for('user_edit_password') }}">
-    <div class="my-2">
-      {{ passwordForm.password.label(class_="sr-only") }}
-      {{ passwordForm.password(class_="form-control", placeholder="Password", required="") }}
-    </div>
-  {% if passwordForm.password.errors %}
-    <div class="text-info">
-      <ul>
-        {% for error in passwordForm.password.errors %}
-        <li>{{ error }}</li>
-        {% endfor %}
-      </ul>
-    </div>
-  {% endif %}
-    <div class="my-2">
-      {{ passwordForm.confirmPassword.label(class_="sr-only") }}
-      {{ passwordForm.confirmPassword(class_="form-control", placeholder="Repeat password", required="") }}
-    </div>
-  {% if passwordForm.confirmPassword.errors %}
-    <div class="text-info">
-      <ul>
-        {% for error in passwordForm.confirmPassword.errors %}
-        <li>{{ error }}</li>
-        {% endfor %}
-      </ul>
-    </div>
-  {% endif %}
-    <button class="btn btn-lg btn-primary btn-block w-20 small-text-l font-weight-bold p-1" type="submit">Confirm</button>
-  </form>
-</div>
+  <div id="password-form" class="bg-white my-4" style="min-width: 320px; max-width: 420px">
+    <h3>Set new password</h3>
+    <form class="form-signin" method="POST" action="{{ url_for('user_edit_password') }}">
+      <div class="my-2">
+        {{ passwordForm.password.label(class_="sr-only") }}
+        {{ passwordForm.password(class_="form-control", placeholder="Password", required="") }}
+      </div>
+    {% if passwordForm.password.errors %}
+      <div class="text-info">
+        <ul>
+          {% for error in passwordForm.password.errors %}
+          <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+      <div class="my-2">
+        {{ passwordForm.confirmPassword.label(class_="sr-only") }}
+        {{ passwordForm.confirmPassword(class_="form-control", placeholder="Repeat password", required="") }}
+      </div>
+    {% if passwordForm.confirmPassword.errors %}
+      <div class="text-info">
+        <ul>
+          {% for error in passwordForm.confirmPassword.errors %}
+          <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+      <button class="btn btn-lg btn-primary btn-block w-20 small-text-l font-weight-bold p-1" type="submit">Confirm</button>
+    </form>
+  </div>
+  <div>
+    <form class="ml-auto w-25" method="POST" action="{{ url_for('user_delete') }}">
+      <button class="invisible p-0" type="submit">
+        <div class="visible d-flex flex-row btn btn-lg btn-danger btn-block small-text-l font-weight-bold">
+            <div class="material-icons md-18 visible">
+              delete_forever
+            </div>
+            <div class="visible pl-1 small-text-l font-weight-bold">
+              Delete
+            </div>
+        </div>
+      </button>
+    </form>
+  </div>
 </div>
 <script type="text/javascript">
   const show_edit_username_box = () => {

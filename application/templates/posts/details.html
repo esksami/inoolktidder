@@ -41,7 +41,10 @@
       </div>
       <div class="post-container d-flex flex-column p-2 pr-4">
         <div class="small-text-l text-dark mb-1">
-          Posted by <span class="small-text-l text-dark font-weight-bold mr-1">{{ post.user.username }}</span> {{ post.time_since_created_str() }}
+          Posted by
+          <span class="small-text-l text-dark font-weight-bold mr-1">
+            {{ post.user.username if post.user else '[deleted]'}}
+          </span> {{ post.time_since_created_str() }}
         </div>
         <div class="title-container flex-grow-1 my-auto">
           <h1>{{ post.title }}<h1>

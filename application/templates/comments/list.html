@@ -19,13 +19,13 @@
     <div class="main m-1 pt-1 pl-2 bg-white border rounded">
       <div class="comment d-flex flex-column" id="{{ comment.id }}">
         <div class="posted-by text-secondary small-text">
-        {% if comment.deleted %}
-          <span class="text-muted small-text font-weight-bold mr-1">
-            [deleted]
-          </span>
-        {% else %}
+        {% if comment.user %}
           <span class="text-info small-text font-weight-bold mr-1">
             {{ comment.user.username }}
+          </span>
+        {% else %}
+          <span class="text-muted small-text font-weight-bold mr-1">
+            [deleted]
           </span>
         {% endif %}
         {{ comment.time_since_created_str() }}

@@ -12,8 +12,7 @@ class Role(Base):
 class UserRole(Base):      
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'),
                         nullable=False)
-    account_id = db.Column(db.Integer, db.ForeignKey('account.id'),
-                           nullable=False) 
+    account_id = db.Column(db.Integer, db.ForeignKey('account.id')) 
 
     role = relationship("Role", backref="user_role")
     user = relationship("User", backref="user_role")

@@ -14,8 +14,7 @@ class Post(Base, TimestampMixin):
 
     account_id = db.Column(
         db.Integer,
-        db.ForeignKey('account.id'),
-        nullable=False
+        db.ForeignKey('account.id')
     )
 
     user = relationship("User", backref="post")
@@ -33,13 +32,11 @@ class PostLike(Base):
 
     post_id = db.Column(
         db.Integer,
-        db.ForeignKey('post.id'),
-        nullable=False
+        db.ForeignKey('post.id')
     )
     account_id = db.Column(
         db.Integer,
-        db.ForeignKey('account.id'),
-        nullable=False
+        db.ForeignKey('account.id')
     )
 
     post = relationship("Post", backref="post_like")
