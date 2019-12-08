@@ -99,7 +99,6 @@ def user_edit_password():
         salt = bcrypt.gensalt(rounds=10)
         phash = bcrypt.hashpw(password, salt)
 
-        user.salt = salt.decode()
         user.phash = phash.decode()
 
         session.commit()
@@ -147,8 +146,7 @@ def auth_signup():
 
     user = User(
         username=form.username.data,
-        phash=phash.decode(),
-        salt=salt.decode()
+        phash=phash.decode()
     )
 
     with session_scope() as session:
@@ -178,16 +176,21 @@ def auth_login():
     user = User.query.filter_by(username=form.username.data).first()
 
     if not user:
-        return render_template('auth/login.html', form=form,
-                                error = 'No such username or password')
+        return render_template(
+            'auth/login.html',
+            form=form,
+            error = 'No such username or password'
+        )
     
     password = form.password.data.encode()
-    salt = user.salt.encode()
-    phash = bcrypt.hashpw(password, salt)
+    phash = user.phash.encode()
 
-    if phash != user.phash.encode():
-        return render_template('auth/login.html', form=form,
-                                error = 'No such username or password')
+    if not bcrypt.checkpw(password, phash):
+        return render_template(
+            'auth/login.html',
+            form=form,
+            error = 'No such username or password'
+        )
 
     login_user(user)
 
