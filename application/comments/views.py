@@ -21,7 +21,12 @@ def comments_create(post_id, comment_id):
     form = CommentForm(request.form)
 
     if not form.validate():
-        return render_template("comments/submit.html", form=form)
+        redirect(url_for("posts_details", post_id=post_id))
+
+    parent = Comment.query.get(comment_id)
+
+    if not parent.post_id == post_id:
+        redirect(url_for("posts_details", post_id=post_id))
 
     comment = Comment(form.content.data)
     comment.account_id = current_user.id

@@ -54,10 +54,14 @@ def posts_index(page=1, per_page=10, sort='popular'):
         elif sort == 'popular':
             query = query.order_by(desc(text('likes - dislikes')))
 
-
-        response = query.paginate(
-            page=page, per_page=per_page, max_per_page=50
-        )
+        try:
+            response = query.paginate(
+                page=page, per_page=per_page, max_per_page=50
+            )
+        except:
+            response = query.paginate(
+                page=1, per_page=per_page, max_per_page=50
+            )
 
         posts = [post for post,
                           post.comments,
