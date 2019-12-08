@@ -3,7 +3,6 @@ import bcrypt
 from flask import render_template, request, redirect, url_for
 from flask_login import login_user, logout_user, login_required, current_user
 
-
 from application import app, db
 from application.utils import session_scope
 
@@ -171,10 +170,6 @@ def auth_login():
     if request.method == 'GET':
         return render_template('auth/login.html', form=LoginForm())
 
-    # print('\n'*5, request.form.get('next'))
-    # print('\n'*5, request.form)
-    print('\n'*5, request.args.get('next'))
-
     form = LoginForm(request.form)
 
     if not form.validate():
@@ -193,7 +188,6 @@ def auth_login():
     if phash != user.phash.encode():
         return render_template('auth/login.html', form=form,
                                 error = 'No such username or password')
-
 
     login_user(user)
 
