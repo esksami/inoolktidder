@@ -6,13 +6,13 @@ from sqlalchemy import event
 from sqlalchemy.orm import relationship
 
 
-class Role(Base):      
+class Role(Base):
     name = db.Column(db.String(128), unique=True)
 
-class UserRole(Base):      
+class UserRole(Base):
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'),
                         nullable=False)
-    account_id = db.Column(db.Integer, db.ForeignKey('account.id')) 
+    account_id = db.Column(db.Integer, db.ForeignKey('account.id'))
 
     role = relationship("Role", backref="user_role")
     user = relationship("User", backref="user_role")
