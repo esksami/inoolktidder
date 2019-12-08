@@ -96,7 +96,7 @@ def user_edit_password():
         user = session.query(User).get(current_user.id)
 
         password = form.password.data.encode()
-        salt = bcrypt.gensalt(rounds=16)
+        salt = bcrypt.gensalt(rounds=10)
         phash = bcrypt.hashpw(password, salt)
 
         user.salt = salt.decode()
@@ -142,7 +142,7 @@ def auth_signup():
         return render_template('auth/signup.html', form=form, error='Username is taken')
 
     password = form.password.data.encode()
-    salt = bcrypt.gensalt(rounds=16)
+    salt = bcrypt.gensalt(rounds=10)
     phash = bcrypt.hashpw(password, salt)
 
     user = User(
