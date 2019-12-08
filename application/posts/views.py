@@ -25,11 +25,14 @@ from application.posts.query import posts_with_aggregates
 
 @app.route("/", methods=["GET"])
 def posts_index(page=1, per_page=10, sort='popular'):
-    with suppress(KeyError):
-        page = int(request.args['page'])
+    pagination_kwargs = {
+        'page': int(request.args.get('page') or page),
+        'per_page': int(request.args.get('per_page') or per_page),
+        'max_per_page': 50
+    }
 
-    with suppress(KeyError):
-        sort = request.args['sort']
+    sort = request.args.get('sort')
+    queryString = request.args.get('query')
 
     user_id = None
 
@@ -39,12 +42,10 @@ def posts_index(page=1, per_page=10, sort='popular'):
     with session_scope() as session:
         query = posts_with_aggregates(session, user_id=user_id)
 
-        with suppress(KeyError):
-            string = request.args['query']
-
+        if queryString:
             query = query.filter(
-                or_(Post.title.ilike('%{0}%'.format(string)),
-                    Post.content.ilike('%{0}%'.format(string)))
+                or_(Post.title.ilike('%{0}%'.format(queryString)),
+                    Post.content.ilike('%{0}%'.format(queryString)))
             )
 
         if sort == 'newest':
@@ -54,30 +55,31 @@ def posts_index(page=1, per_page=10, sort='popular'):
         elif sort == 'popular':
             query = query.order_by(desc(text('likes - dislikes')))
 
-        try:
-            response = query.paginate(
-                page=page, per_page=per_page, max_per_page=50
-            )
-        except:
-            response = query.paginate(
-                page=1, per_page=per_page, max_per_page=50
-            )
+        pagination = None
+        items = []
+
+        with suppress(Exception):
+            pagination = query.paginate(**pagination_kwargs)
+            items = pagination.items
 
         posts = [post for post,
                           post.comments,
                           post.likes,
                           post.dislikes,
-                          post.userLike in response.items]
+                          post.userLike in items]
 
-        first = max(1, response.page - 2)
-        last = min(response.pages, response.page + 2) + 1
-        page_range = list(range(first, last))
+        page_range = None
+
+        if pagination:
+            first = max(1, pagination.page - 2)
+            last = min(pagination.pages, pagination.page + 2) + 1
+            page_range = list(range(first, last))
 
         return render_template(
             "posts/list.html",
             posts=posts,
             page_range=page_range,
-            pagination=response
+            pagination=pagination
         )
 
 @app.route("/submit")
