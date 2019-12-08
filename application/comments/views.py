@@ -13,11 +13,14 @@ from application.posts.models import Post
 from application.auth.models import User
 
 
-@app.route("/<post_id>/comments/create", defaults={'comment_id': None}, methods=["POST"])
-@app.route("/<post_id>/comments/create/<comment_id>", methods=["POST"])
+@app.route("/<post_id>/comments/create", defaults={'comment_id': None}, methods=["GET", "POST"])
+@app.route("/<post_id>/comments/create/<comment_id>", methods=["GET", "POST"])
 @login_required
 @roles_required('APPROVED')
 def comments_create(post_id, comment_id):
+    if request.method == 'GET':
+        redirect(f'{url_for("posts_details", post_id=post_id)}#{comment_id or ""}')
+
     form = CommentForm(request.form)
 
     if not form.validate():
@@ -39,17 +42,20 @@ def comments_create(post_id, comment_id):
 
         return redirect(f'{url_for("posts_details", post_id=post_id)}#{comment.id}')
 
-@app.route("/comments/delete/<comment_id>/", methods=["POST"])
+@app.route("/<post_id>/comments/delete/<comment_id>/", methods=["GET", "POST"])
 @login_required
-def comments_delete(comment_id):
-    comment = Comment.query.get(comment_id)
-
-    if comment.account_id != current_user.id:
-        return redirect(url_for("posts_details", post_id=comment.post_id))
-
-    comment.deleted = True
+def comments_delete(post_id, comment_id):
+    if request.method == 'GET':
+        redirect(url_for("posts_details", post_id=post_id))
 
     with session_scope() as session:
+        comment = Comment.query.get(comment_id)
+
+        if comment.account_id != current_user.id:
+            return redirect(url_for("posts_details", post_id=comment.post_id))
+
+        comment.deleted = True
+
         session.commit()
 
-    return redirect(url_for("posts_details", post_id=comment.post_id))
+        return redirect(f'{url_for("posts_details", post_id=comment.post_id)}#{comment.id}')

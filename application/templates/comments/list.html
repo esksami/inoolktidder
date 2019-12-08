@@ -53,7 +53,7 @@
           </div>
         {% if current_user.id == comment.account_id %}
           <div class="delete text-left mr-1">
-            <form method="POST" action="{{ url_for('comments_delete', comment_id=comment.id) }}">
+            <form method="POST" action="{{ url_for('comments_delete', post_id=post.id, comment_id=comment.id) }}">
               <button class="invisible p-0" type="submit">
                 <div class="d-flex flex-row btn p-0 color-hover text-secondary visible">
                   <div class="material-icons md-14 visible">delete</div>
@@ -88,7 +88,7 @@
     commentBox.id = 'reply-box';
     commentBox.classList.add('mb-1');
 
-    var previousCommentBox = document.getElementById('reply-box');;
+    var previousCommentBox = document.getElementById('reply-box');
 
     if (previousCommentBox !== null) {
       previousCommentBox.parentNode.removeChild(previousCommentBox);
