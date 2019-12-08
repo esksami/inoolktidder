@@ -2,16 +2,14 @@ from flask import redirect, render_template, request, url_for
 from flask_login import login_required, current_user
 
 from application import app, db
-from application.utils import session_scope
-from application.utils import roles_required
+from application.utils import session_scope, roles_required
+
+from application.auth.models import User
 
 from application.comments.models import Comment
 from application.comments.forms import CommentForm
 
 from application.posts.models import Post
-
-from application.auth.models import User
-
 
 @app.route("/<post_id>/comments/create", defaults={'comment_id': None}, methods=["GET", "POST"])
 @app.route("/<post_id>/comments/create/<comment_id>", methods=["GET", "POST"])
@@ -19,7 +17,7 @@ from application.auth.models import User
 @roles_required('APPROVED')
 def comments_create(post_id, comment_id):
     if request.method == 'GET':
-        redirect(f'{url_for("posts_details", post_id=post_id)}#{comment_id or ""}')
+        return redirect(f'{url_for("posts_details", post_id=post_id)}#{comment_id or ""}')
 
     form = CommentForm(request.form)
 
@@ -46,7 +44,7 @@ def comments_create(post_id, comment_id):
 @login_required
 def comments_delete(post_id, comment_id):
     if request.method == 'GET':
-        redirect(url_for("posts_details", post_id=post_id))
+        return redirect(url_for("posts_details", post_id=post_id))
 
     with session_scope() as session:
         comment = Comment.query.get(comment_id)
