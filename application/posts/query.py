@@ -10,9 +10,9 @@ from sqlalchemy.sql.expression import bindparam
 
 __all__ = ('posts_with_aggregates',)
 
-postLikes = aliased(PostLike)
-postDislikes = aliased(PostLike)
-userLike = aliased(PostLike)
+postLikes = aliased(PostLike, name='post_likes')
+postDislikes = aliased(PostLike, name='post_dislikes')
+userLike = aliased(PostLike, name='user_like')
 
 _posts_with_comment_count = (db.session()
     .query(Post.id.label('post_id'),
@@ -23,10 +23,12 @@ _posts_with_comment_count = (db.session()
 
 _posts_with_aggregates = (db.session()
     .query(Post,
-           _posts_with_comment_count.c.comments.label('comments'),
+           db.func.max(_posts_with_comment_count.c.comments).label('comments'),
            db.func.count(postLikes.value).label('likes'),
            db.func.count(postDislikes.value).label('dislikes'),
-           userLike.value.label('userLike'))
+           (db.func.count(postLikes.value).label('likes') - 
+            db.func.count(postDislikes.value).label('dislikes')).label('popularity'),
+           db.func.max(userLike.value).label('userLike'))
     .outerjoin(User, User.id == Post.account_id)
     .outerjoin(_posts_with_comment_count, _posts_with_comment_count.c.post_id == Post.id)
     .outerjoin(postLikes,

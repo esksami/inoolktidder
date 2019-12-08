@@ -25,6 +25,7 @@ from application.posts.query import posts_with_aggregates
 
 @app.route("/", methods=["GET"])
 def posts_index(page=1, per_page=10, sort='popular'):
+    print('posts posts_index')
     pagination_kwargs = {
         'page': int(request.args.get('page') or page),
         'per_page': int(request.args.get('per_page') or per_page),
@@ -53,7 +54,7 @@ def posts_index(page=1, per_page=10, sort='popular'):
         elif sort == 'oldest':
             query = query.order_by(asc(Post.date_created))
         elif sort == 'popular':
-            query = query.order_by(desc(text('likes - dislikes')))
+            query = query.order_by(desc(text('popularity')))
 
         pagination = None
         items = []
@@ -66,6 +67,7 @@ def posts_index(page=1, per_page=10, sort='popular'):
                           post.comments,
                           post.likes,
                           post.dislikes,
+                          post.popularity,
                           post.userLike in items]
 
         page_range = None
@@ -177,6 +179,7 @@ def posts_details(post_id):
          post.comments,
          post.likes,
          post.dislikes,
+         post.popularity,
          post.userLike) = response
 
         comments = (session
