@@ -26,9 +26,9 @@ def comments_create(post_id, comment_id):
     if not form.validate():
         redirect(url_for("posts_details", post_id=post_id))
 
-    parent = Comment.query.get(comment_id)
+    parent = Comment.query.get(comment_id) if comment_id else None
 
-    if not parent.post_id == post_id:
+    if parent and not parent.post_id == post_id:
         redirect(url_for("posts_details", post_id=post_id))
 
     comment = Comment(form.content.data)
