@@ -40,7 +40,7 @@ class TimestampMixin:
 
         try:
             unit, value = next(
-                (unit, int(value)) for unit, value in unitValuePairs if value > 0
+                (unit, int(value)) for unit, value in unitValuePairs if int(value) > 0
             )
         except StopIteration:
             return 'Just now'
