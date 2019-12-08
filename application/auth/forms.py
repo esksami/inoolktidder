@@ -22,7 +22,31 @@ class SignUpForm(FlaskForm):
     ])
     password = PasswordField('Password', [
     	Length(min=3, max=128,
-    		message='Username must be between 3 and 128 characters'),
+    		message='Password must be between 3 and 128 characters'),
+        DataRequired(),
+    ])
+    confirmPassword = PasswordField('Repeat Password', [
+        EqualTo('password', message='Passwords must match.'),
+        DataRequired()
+    ])
+  
+    class Meta:
+        csrf = False
+
+
+class UsernameForm(FlaskForm):
+    username = StringField('Username', [
+        Length(min=3, max=64,
+            message='Username must be between 3 and 64 characters'),
+        DataRequired()
+    ])
+    class Meta:
+        csrf = False
+
+class PasswordForm(FlaskForm):
+    password = PasswordField('Password', [
+        Length(min=3, max=128,
+            message='Password must be between 3 and 128 characters'),
         DataRequired(),
     ])
     confirmPassword = PasswordField('Repeat Password', [

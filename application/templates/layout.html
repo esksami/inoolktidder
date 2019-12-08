@@ -29,7 +29,10 @@
     {% if current_user.is_authenticated %}
       <div class="d-flex flex-row">
         <span class="nav-link px-0">
-          Logged in as <span class="text-info font-weight-bold">{{ current_user.username }}</span>.
+          Logged in as
+          <a class="text-info font-weight-bold" href="{{ url_for('user_profile') }}">
+            {{ current_user.username }}
+          </a>.
         </span>
         <a class="nav-link" href="{{ url_for('auth_logout') }}">
           Log out.
