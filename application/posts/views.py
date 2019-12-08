@@ -32,7 +32,7 @@ def posts_index(page=1, per_page=10, sort='popular'):
         'max_per_page': 50
     }
 
-    sort = request.args.get('sort')
+    sort = request.args.get('sort') or sort
     queryString = request.args.get('query')
 
     user_id = None
