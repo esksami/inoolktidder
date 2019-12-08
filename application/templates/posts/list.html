@@ -81,7 +81,7 @@
       <div class="mx-auto text-center" style="margin-bottom: -10px; margin-top: 5px;">
         <form method="POST" action="{{ url_for('posts_undo_like' if post.userLike.name == 'like' else 'posts_like' , post_id=post.id) }}">
           <button class="invisible p-0" type="submit">
-            <span class="material-icons md-18 visible {{ 'text-green' if post.userLike.name == 'like' else 'text-dark'}}" style="transform: rotate(-90deg);">
+            <span class="material-icons md-18 visible {{ 'text-green' if post.userLike.name == 'like' else 'text-muted'}}" style="transform: rotate(-90deg);">
               forward
             </span>
           </button>
@@ -95,7 +95,7 @@
       <div class="mx-auto text-center" style="margin-top: -4px;">
         <form method="POST" action="{{ url_for('posts_undo_dislike' if post.userLike.name == 'dislike' else 'posts_dislike', post_id=post.id) }}">
           <button class="invisible p-0" type="submit">
-            <span class="material-icons md-18 visible {{ 'text-danger'  if post.userLike.name == 'dislike' else 'text-dark'}}" style="transform: rotate(90deg);">
+            <span class="material-icons md-18 visible {{ 'text-danger'  if post.userLike.name == 'dislike' else 'text-muted'}}" style="transform: rotate(90deg);">
               forward
             </span>
           </button>
