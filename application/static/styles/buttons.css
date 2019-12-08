@@ -14,9 +14,7 @@
   margin: 0px;
   padding: 1.2em 2.8em;
   text-decoration: none;
-  text-align: center;
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 700; }
+  text-align: center; }
   .btn-basic:hover, .btn-basic:focus {
     color: #fff;
     outline: 0; }
