@@ -5,12 +5,13 @@
     <title>Tidder</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/index.css') }}">
+    <link href="https://fonts.googleapis.com/css?family=Sulphur+Point&display=swap" rel="stylesheet">
   </head>
   <body class="bg-light mb-5">
-    <nav class="navbar bg-white border-bottom mb-3">
-      <a class="navbar-brand" href="/">
-        <h1>Tidder</h1>
+    <nav class="navbar bg-white border-bottom mb-3 pb-0">
+      <a class="navbar-brand" href="/" style="font-family: 'Sulphur Point', sans-serif; color: #5989bd;">
+        <h1 class="h1">tidder</h1>
       </a>
       <div class="ml-auto">
         <form onsubmit="return false;">
@@ -28,25 +29,25 @@
       </div>
     {% if current_user.is_authenticated %}
       <div class="d-flex flex-row">
-        <span class="nav-link px-0">
+        <span class="text-dark nav-link px-0 pb-0">
           Logged in as
-          <a class="text-info font-weight-bold" href="{{ url_for('user_profile') }}">
-            {{ current_user.username }}
-          </a>.
+          <a class="color-main text-11 font-weight-bold" href="{{ url_for('user_profile') }}">
+            {{ current_user.username }}.
+          </a>
         </span>
-        <a class="nav-link" href="{{ url_for('auth_logout') }}">
+        <a class="color-main nav-link" href="{{ url_for('auth_logout') }}">
           Log out.
         </a>
       </div>
     {% else %}
       <div class="d-flex flex-row">
         <div class="border-right">
-          <a class="nav-link px-2" href="{{ url_for('auth_login') }}">
+          <a class="color-main nav-link px-2" href="{{ url_for('auth_login') }}">
             Sign in
           </a>
         </div>
         <div>
-          <a class="nav-link px-2" href="{{ url_for('auth_signup') }}">
+          <a class="color-main nav-link px-2" href="{{ url_for('auth_signup') }}">
             Sign up
           </a>
         </div>

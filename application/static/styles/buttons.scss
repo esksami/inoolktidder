@@ -1,0 +1,102 @@
+//Colours
+$green: #2ecc71;
+$red: #e74c3c;
+$blue: #3498db;
+$yellow: #f1c40f;
+$purple: #8e44ad;
+$turquoise: #1abc9c;
+$dgreen: #24b863;
+
+@mixin transition($property: all, $duration: 0.45s, $ease: cubic-bezier(0.65,0,.076,1)) {
+  transition: $property $duration $ease;
+}
+
+.btn-basic {
+  box-sizing: border-box;
+  appearance: none;
+  background-color: transparent;
+  border: 2px solid $red;
+  border-radius: 0.6em;
+  color: $red;
+  cursor: pointer;
+  display: flex;
+  align-self: center;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1;
+  margin: 0px;
+  padding: 1.2em 2.8em;
+  text-decoration: none;
+  text-align: center;
+/*  text-transform: uppercase;
+*/  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+
+  &:hover,
+  &:focus {
+    color: #fff;
+    outline: 0;
+  }
+}
+
+.btn-submit {
+  background: #fff;
+  box-shadow: 0 .125rem .25rem rgba(0,0,0,.075)!important;
+  border-color: $dgreen;
+  color: $dgreen;
+  border-radius: 1.5em;
+  padding: 1em;
+  border-width: 0px;
+  background: {
+    repeat: none;
+    image: linear-gradient(90deg,$dgreen 50%, transparent 50%);
+    position: 67%;
+    size: 400%;
+  }
+
+  @include transition(all, 0.95s, cubic-bezier(0.65,0,.076,1));
+/*  transition: background 300ms ease-in-out;
+*/  
+  &:hover {
+    background-position: 32%;
+    color: #fff;
+    border-radius: 2em;
+  }
+}
+
+.btn-submit-2 {
+  border-color: $purple;
+  // border: 0;
+/*  border-radius: 1em;
+*/  padding: 0.3em 0.3em;
+  color: $purple;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+
+  /* Prevent background color leak outs */
+  -webkit-background-clip: padding-box; 
+  -moz-background-clip:    padding; 
+  background-clip:         padding-box;
+
+  &:after {
+    content: '';
+    position: absolute;
+    display: block;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 100%;
+    background: $purple;
+    z-index: -1;
+    transition: width 150ms ease-in-out;
+  }
+  
+  &:hover {
+    color: #fff;
+    &:after {
+      width: 110%;
+    }
+  }
+}

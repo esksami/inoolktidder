@@ -9,7 +9,7 @@
         {% if post.userLike.name == "like" %}
           <form method="POST" action="{{ url_for('posts_undo_like', post_id=post.id) }}">
             <button class="invisible p-0" type="submit">
-              <span class="material-icons font-weight-bold visible text-success">arrow_drop_up</span>
+              <span class="material-icons font-weight-bold visible text-green">arrow_drop_up</span>
             </button>
           </form>
         {% else %}

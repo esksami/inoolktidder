@@ -126,3 +126,5 @@ dmypy.json
 
 # sqlite3 database
 application/tidder.db
+
+.sass-cache

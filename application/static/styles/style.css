@@ -47,3 +47,12 @@ h3 {
 
 
 .w-20 { width:20%!important; }
+
+
+.color-main {
+  color: #5989bd;
+}
+
+.text-green {
+  color: #2ecc71;
+}
