@@ -1,7 +1,7 @@
 from flask import Flask
+
 app = Flask(__name__)
 
-from flask_sqlalchemy import SQLAlchemy
 
 import os
 
@@ -12,12 +12,18 @@ else:
     app.config["SQLALCHEMY_ECHO"] = True
 
 
+from flask_sqlalchemy import SQLAlchemy
+
 db = SQLAlchemy(app)
 
+
 from os import urandom
+
 app.config["SECRET_KEY"] = urandom(32)
 
+
 from flask_login import LoginManager
+
 login_manager = LoginManager()
 login_manager.init_app(app)
 
@@ -43,7 +49,7 @@ from application.auth import views
 from application.roles import models
 
 
-try: 
-    db.create_all()
-except:
-    pass
+from contextlib import suppress
+
+with suppress(Exception):
+	db.create_all()

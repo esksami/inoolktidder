@@ -1,26 +1,23 @@
+from contextlib import suppress
+
 from flask import redirect, render_template, request, url_for, request
 from flask_login import login_required, current_user
 
-from application import app, db
-from application.utils import session_scope
-from application.utils import roles_required
+from sqlalchemy import and_, or_, asc, desc, text
+from sqlalchemy.orm import aliased
 
-from application.posts.models import Post, PostLike, PostLikeValue
-from application.posts.forms import PostForm
+from application import app, db
+from application.utils import session_scope, roles_required
 
 from application.auth.models import User
 
 from application.comments.models import Comment
 from application.comments.forms import CommentForm
 
-from application.posts.utils.comment_tree import create_comment_tree
-
-from contextlib import suppress
-
-from sqlalchemy import and_, or_, asc, desc, text
-from sqlalchemy.orm import aliased
-
+from application.posts.models import Post, PostLike, PostLikeValue
+from application.posts.forms import PostForm
 from application.posts.query import posts_with_aggregates
+from application.posts.utils import create_comment_tree
 
 
 @app.route("/", methods=["GET"])

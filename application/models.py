@@ -1,7 +1,7 @@
-from application import db
-
 from sqlalchemy.orm import column_property
 from sqlalchemy.ext.declarative import declared_attr
+
+from application import db
 
 
 class Base(db.Model):

@@ -4,8 +4,6 @@ from application.models import Base, TimestampMixin
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import text
 
-from datetime import datetime
-
 
 class Comment(Base, TimestampMixin):
     content = db.Column(db.String(4096))

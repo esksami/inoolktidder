@@ -1,4 +1,5 @@
 import bcrypt
+from contextlib import suppress
 
 from flask import render_template, request, redirect, url_for
 from flask_login import login_user, logout_user, login_required, current_user
@@ -9,11 +10,10 @@ from application.utils import session_scope
 from application.auth.models import User
 from application.auth.forms import LoginForm, SignUpForm, UsernameForm, PasswordForm
 
-from application.roles.models import Role, UserRole
-
 from application.posts.models import PostLike
 
-from contextlib import suppress
+from application.roles.models import Role, UserRole
+
 
 @app.route('/profile', methods = ['GET'])
 @login_required

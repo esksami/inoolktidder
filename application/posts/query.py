@@ -4,7 +4,7 @@ from application.posts.models import Post, PostLike, PostLikeValue
 from application.auth.models import User
 from application.comments.models import Comment
 
-from sqlalchemy import and_, or_
+from sqlalchemy import and_
 from sqlalchemy.orm import aliased
 from sqlalchemy.sql.expression import bindparam
 

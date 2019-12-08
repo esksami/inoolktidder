@@ -1,9 +1,9 @@
+from sqlalchemy import event
+from sqlalchemy.orm import relationship
+
 from application import db
 from application.models import Base
 from application.utils import session_scope
-
-from sqlalchemy import event
-from sqlalchemy.orm import relationship
 
 
 class Role(Base):
