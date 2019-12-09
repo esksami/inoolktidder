@@ -59,7 +59,7 @@ def comments_edit(post_id, comment_id):
 
     parent = Comment.query.get(comment_id) if comment_id else None
 
-    if parent and not parent.post_id == post_id:
+    if parent and not str(parent.post_id) == post_id:
         return redirect(url_for("posts_details", post_id=post_id))
 
 
