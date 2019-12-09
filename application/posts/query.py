@@ -8,7 +8,12 @@ from sqlalchemy import and_
 from sqlalchemy.orm import aliased
 from sqlalchemy.sql.expression import bindparam
 
+from sqlalchemy import case
+
+import sqlalchemy
+
 __all__ = ('posts_with_aggregates',)
+
 
 postLikes = aliased(PostLike, name='post_likes')
 postDislikes = aliased(PostLike, name='post_dislikes')
@@ -24,22 +29,21 @@ _posts_with_comment_count = (db.session()
 _posts_with_aggregates = (db.session()
     .query(Post,
            db.func.max(_posts_with_comment_count.c.comments).label('comments'),
-           db.func.count(postLikes.value).label('likes'),
-           db.func.count(postDislikes.value).label('dislikes'),
-           (db.func.count(postLikes.value).label('likes') - 
-            db.func.count(postDislikes.value).label('dislikes')).label('popularity'),
-           db.func.max(userLike.value).label('userLike'))
+           db.func.count(
+                case([((PostLike.value == PostLikeValue.like), PostLike.value)])
+           ).label('likes'),
+           db.func.count(
+                case([((PostLike.value == PostLikeValue.dislike), PostLike.value)])
+           ).label('dislikes'),
+           db.func.sum(
+                case([((PostLike.value == PostLikeValue.like), 1)], else_=-1)
+           ).label('popularity'),
+           db.func.max(
+                case([((PostLike.account_id == bindparam('user_id')), PostLike.value)])
+           ).label('userLike'))
     .outerjoin(User, User.id == Post.account_id)
     .outerjoin(_posts_with_comment_count, _posts_with_comment_count.c.post_id == Post.id)
-    .outerjoin(postLikes,
-               and_(postLikes.post_id == Post.id,
-                    postLikes.value == PostLikeValue.like))
-    .outerjoin(postDislikes,
-               and_(postDislikes.post_id == Post.id,
-                    postDislikes.value == PostLikeValue.dislike))
-    .outerjoin(userLike,
-               and_(userLike.post_id == Post.id,
-                    userLike.account_id == bindparam('user_id')))
+    .outerjoin(PostLike, PostLike.post_id == Post.id)
     .group_by(Post.id)
     .with_session(None))
 
