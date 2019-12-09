@@ -4,13 +4,20 @@
 
 {% block body %}
 <div class="bg-white border rounded p-3">
-  <div class="p-2 text-center">
+  <div class="p-2 text-center color-main" style="text-shadow: none;">
+    <span class="material-icons md-36">assignment</span>
     <h1>Create a new post!</h1>
   </div>
   <form method="POST" action="{{ url_for('posts_submit') }}">
-    <div class="md-form my-2">
-      {{ form.title.label(class_="font-weight-bold") }}
-      {{ form.title(class_="form-control", autofocus="") }}
+    <div class="md-form my-2 d-flex flex-row">
+      
+      {{ form.title.label(class_="sr-only") }}
+      <div class="my-auto" style="height:24px">
+        <span class="material-icons text-secondary mr-2">
+          short_text
+        </span>
+      </div>
+      {{ form.title(class_="form-control", autofocus="", placeholder="Title", style="box-shadow: none;border-top: none; border-left: none; border-right: none; border-radius: 0;") }}
     </div>
     <div class="text-info">
       <ul>
@@ -19,9 +26,14 @@
         {% endfor %}
       </ul>
     </div>
-    <div class="my-2">
-      {{ form.content.label(class_="font-weight-bold") }}
-      {{ form.content(rows=12, class_="form-control") }}
+    <div class="my-2 d-flex flex-row">
+      {{ form.content.label(class_="sr-only") }}
+      <div class="mb-auto" style="height:24px">
+        <span class="material-icons text-secondary mr-2">
+          notes
+        </span>
+      </div>
+      {{ form.content(rows=12, class_="form-control", placeholder="Content", style="box-shadow: none;") }}
     </div>
     <div class="text-info">
       <ul>
@@ -31,7 +43,16 @@
       </ul>
     </div>
     <div>
-       <button class="btn btn-success btn-block btn-rounded" type="submit">Submit!</button>
+      <div class="d-flex flex-row">
+        <button class="ml-2 btn btn-success btn-block btn-rounded ml-auto" style="width:100px" type="submit">
+          Submit!
+        </button>
+        <a href="{{ url_for('posts_index') }}" class="invisible" style="text-decoration: none">
+          <button type="button" class="ml-2 visible btn btn-secondary btn-block btn-rounded" style="width:100px" type="submit">
+            Cancel
+          </button>
+        </a>
+      </div>
     </div>
   </form>
 </div>

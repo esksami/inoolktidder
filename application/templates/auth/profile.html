@@ -45,7 +45,7 @@
   </div>
 {% endif %}
   <div id="password-form" class="bg-white my-4" style="min-width: 320px; max-width: 420px">
-    <h3>Set new password</h3>
+    <h3>Change password</h3>
     <form class="form-signin" method="POST" action="{{ url_for('user_edit_password') }}">
       <div class="my-2">
         {{ passwordForm.password.label(class_="sr-only") }}

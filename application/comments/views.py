@@ -16,7 +16,6 @@ from application.posts.models import Post
 @login_required
 @roles_required('APPROVED')
 def comments_create(post_id, comment_id):
-    print('creating comment')
     if request.method == 'GET':
         return redirect(f'{url_for("posts_details", post_id=post_id)}#{comment_id or ""}')
 
