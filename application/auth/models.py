@@ -9,7 +9,7 @@ class User(Base):
     username = db.Column(db.String(144), unique=True, nullable=False)
     phash = db.Column(db.String(60), nullable=False)
 
-    def __init__(self, username, phash, salt):
+    def __init__(self, username, phash):
         self.username = username
         self.phash = phash
   
