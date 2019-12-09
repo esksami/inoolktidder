@@ -16,6 +16,7 @@ from application.posts.models import Post
 @login_required
 @roles_required('APPROVED')
 def comments_create(post_id, comment_id):
+    print('creating comment')
     if request.method == 'GET':
         return redirect(f'{url_for("posts_details", post_id=post_id)}#{comment_id or ""}')
 
@@ -26,7 +27,7 @@ def comments_create(post_id, comment_id):
 
     parent = Comment.query.get(comment_id) if comment_id else None
 
-    if parent and (not parent.post_id == post_id or parent.deleted):
+    if parent and (str(parent.post_id) != post_id or parent.deleted):
         return redirect(url_for("posts_details", post_id=post_id))
 
     comment = Comment(form.content.data)
