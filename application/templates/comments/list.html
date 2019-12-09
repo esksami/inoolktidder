@@ -42,16 +42,42 @@
           <p class="mb-0">{{ comment.content.split('\n')[-1] }}</p>
         {% endif %}
         </div>
+        <div class="edit-comment-box mb-2" style="max-width:80%; display:none">
+          <form method="POST" action="{{ url_for('comments_edit', post_id=post.id, comment_id = comment.id) }}">
+            <div class="mt-2 mb-1">
+              {{ form.content.label(class_="sr-only") }}
+              {{ form.content(rows=4, class_="content-text-area form-control") }}
+            </div>
+            <div class="d-flex flex-row ">
+              <div class="ml-auto ml-2 text-right small-text">
+                <button class="btn btn-success btn-rounded py-1 px-2 m-0 small-text-l font-weight-bold" type="submit">Edit</button>
+              </div>
+              <div class="ml-2 text-right small-text">
+                <button class="cancel-comment btn btn-secondary btn-rounded py-1 px-2 m-0 small-text-l font-weight-bold" type="button" onclick="toggle_edit_box({{ comment.id }})">Cancel</button>
+              </div>
+            </div>
+          </form>
+        </div>
         <div class="misc-container d-flex flex-row pt-1">
+        {% if not comment.deleted %}
           <div class="reply mr-1">
-            <button class="invisible p-0" onclick="show_reply_box({{ comment.id }})">
-              <div class="d-flex flex-row btn p-0 color-hover text-secondary visible">
+            <button class="invisible p-0" onclick="toggle_reply_box({{ comment.id }})">
+              <div class="reply-button-content d-flex flex-row btn p-0 color-hover text-secondary visible">
                 <div class="material-icons md-14 visible">reply</div>
                 <div class="visible pb-1 pl-1 small-text font-weight-bold">Reply</div>
               </div>
             </button>
           </div>
-        {% if current_user.id == comment.account_id %}
+        {% endif %}
+        {% if current_user.id == comment.account_id and not comment.deleted %}
+          <div class="reply mr-1">
+            <button class="invisible p-0" onclick="toggle_edit_box({{ comment.id }})">
+              <div class="d-flex flex-row btn p-0 color-hover text-secondary visible">
+                <div class="material-icons md-14 visible">edit</div>
+                <div class="visible pb-1 pl-1 small-text font-weight-bold">Edit</div>
+              </div>
+            </button>
+          </div>
           <div class="delete text-left mr-1">
             <form method="POST" action="{{ url_for('comments_delete', post_id=post.id, comment_id=comment.id) }}">
               <button class="invisible p-0" type="submit">
@@ -66,6 +92,22 @@
         </div>
       </div>
       <div class="children ml-3">
+        <div class="reply-comment-box mb-2" style="max-width:80%; display:none">
+          <form method="POST" action="{{ url_for('comments_create', post_id=post.id, comment_id = comment.id) }}">
+            <div class="mt-2 mb-1">
+              {{ form.content.label(class_="sr-only") }}
+              {{ form.content(rows=4, class_="content-text-area form-control", placeholder="Write your reply here...") }}
+            </div>
+            <div class="d-flex flex-row ">
+              <div class="ml-auto ml-2 text-right small-text">
+                <button class="btn btn-success btn-rounded py-1 px-2 m-0 small-text-l font-weight-bold" type="submit">Reply</button>
+              </div>
+              <div class="ml-2 text-right small-text">
+                <button class="cancel-comment btn btn-secondary btn-rounded py-1 px-2 m-0 small-text-l font-weight-bold" type="button" onclick="toggle_reply_box({{ comment.id }})">Cancel</button>
+              </div>
+            </div>
+          </form>
+        </div>
         {{ traverse(comment.children) }}
       </div>
     </div>
@@ -75,26 +117,70 @@
   </div>
 </div>
 <script type="text/javascript">
-  const show_reply_box = (comment_id) => {
-    var comment = document.getElementById(comment_id);
-    var childrenContainer = comment.nextElementSibling;
+  const toggle_edit_box = (comment_id) => {
+    var comment = document.getElementById(comment_id)
+    var contentContainer = comment.getElementsByClassName('content-container').item(0)
+    var editCommentBox = comment.getElementsByClassName('edit-comment-box').item(0)
+    var textArea = comment.getElementsByClassName('content-text-area').item(0)
+    var miscContainer = comment.getElementsByClassName('misc-container').item(0)
 
-    var commentBox = document.getElementById('comment-box')
-                             .cloneNode(true);
+    textArea.value = contentContainer.innerText
 
-    var act = `{{ url_for('comments_create', post_id=post.id) }}/${comment_id}`;
+    display = contentContainer.style.display
 
-    commentBox.getElementsByTagName('form')[0].action = act;
-    commentBox.id = 'reply-box';
-    commentBox.classList.add('mb-1');
+    if (display === 'none') {
+      contentContainer.style.display = "";
+      miscContainer.style.display = ""
+      miscContainer.classList.add("d-flex");
+      editCommentBox.style.display = "none";
+    } else {
+      contentContainer.style.display = "none";
+      miscContainer.style.display = "none";
+      miscContainer.classList.remove("d-flex");
 
-    var previousCommentBox = document.getElementById('reply-box');
+      editCommentBox.style.display = "";
+    }
+  }
 
-    if (previousCommentBox !== null) {
-      previousCommentBox.parentNode.removeChild(previousCommentBox);
-    };
+  const toggle_reply_box = (comment_id) => {
+    var comment = document.getElementById(comment_id)
+    var children = comment.nextElementSibling
+    var replyBox = children.getElementsByClassName('reply-comment-box').item(0)
 
-    childrenContainer.prepend(commentBox);
-  };
+    display = replyBox.style.display
+
+    var previousReplyBox = document.getElementById('current-reply-box')
+
+    replyButton = comment
+      .getElementsByClassName('reply-button-content')
+      .item(0)
+    
+    replyButton.classList.remove('text-secondary')
+    replyButton.classList.add('text-primary')
+
+    if (previousReplyBox !== null) {
+      previousReplyBox.style.display = "none"
+      previousReplyBox.id = ''
+      
+      previousReplyButton = previousReplyBox.parentElement.parentElement
+        .getElementsByClassName('reply-button-content')
+        .item(0)
+      previousReplyButton.classList.add('text-secondary')
+      previousReplyButton.classList.remove('text-primary')
+    }
+
+    if (display === 'none') {
+      replyBox.style.display = ""
+      replyBox.id = 'current-reply-box'
+      
+      replyButton.classList.remove('text-secondary')
+      replyButton.classList.add('text-primary')
+    } else {
+      replyBox.style.display = "none"
+      
+      replyButton.classList.add('text-secondary')
+      replyButton.classList.remove('text-primary')
+    }
+  }
 </script>
 {% endblock %}
