@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block body %}
-<div class="bg-white mx-auto p-4 border rounded" style="min-width: 320px; max-width: 450px">
+<section id="profile" class="bg-white mx-auto p-4 border rounded" style="min-width: 320px; max-width: 450px">
   <h1 class="mb-4">Profile</h1>
   <div id="username-container" class="d-flex flex-column">
     <div class="d-flex flex-row border-bottom">
@@ -90,7 +90,7 @@
       </button>
     </form>
   </div>
-</div>
+</section>
 <script type="text/javascript">
   const show_edit_username_box = () => {
     var usernameEditForm = document.getElementById('username-form')

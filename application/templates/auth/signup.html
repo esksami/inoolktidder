@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block body %}
-<div class="bg-white m-auto p-4 border rounded" style="min-width: 320px; max-width: 420px">
+<section id="signup" class="bg-white m-auto p-4 border rounded" style="min-width: 320px; max-width: 420px">
   <form class="form-signin" method="POST" action="{{ url_for('auth_signup') }}">
     <h1 class="mb-4">Sign up</h1>
     <div class="my-2">
@@ -57,5 +57,5 @@
       Sign in
     </a>
   </div>
-</div>
+</section>
 {% endblock %}
