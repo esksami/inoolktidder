@@ -36,15 +36,17 @@
             {{ post.user.username if post.user else '[deleted]'}}
           </span> {{ post.time_since_created_str() }}
         </div>
-        <div class="title-container flex-grow-1 my-auto">
-          <h1>{{ post.title }}<h1>
+        <article class="user-post">
+          <header class="title-container flex-grow-1 my-auto">
+            <h1>{{ post.title }}<h1>
+          </header>
           <hr class="my-2 shadow-sm">
-        </div>
-        <div class="content-container flex-grow-1 my-auto">
-        {% for paragraph in post.content.split('\n') %}
-          <p>{{ paragraph }}</p>
-        {% endfor %}
-        </div>
+          <div class="content-container flex-grow-1 my-auto">
+          {% for paragraph in post.content.split('\n') %}
+            <p>{{ paragraph }}</p>
+          {% endfor %}
+          </div>
+        </article>
         <div class="misc-container d-flex flex-row">
           <div class="comments mr-3">
             <a class="invisible" href="{{ url_for('posts_details', post_id=post.id) }}#Comments">
