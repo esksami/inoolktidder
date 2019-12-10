@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block body %}
-  <div class="d-flex flex-row bg-white border rounded py-1">
+  <section id="post-details" class="d-flex flex-row bg-white border rounded py-1">
     <div class="d-flex flex-row">
       <div class="likes-container d-flex flex-column px-1"
            style="min-width: 50px;">
@@ -83,6 +83,6 @@
         </div>
       </div>  
     </div>
-  </div>
+  </section>
 {% include '/comments/list.html' %}
 {% endblock %}

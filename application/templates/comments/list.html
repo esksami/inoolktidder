@@ -13,7 +13,7 @@
       </div>
     </form>
   </div>
-  <div id="Comments">
+  <section id="comment-section">
   {%- macro traverse(comments) %}
     {%- for comment in comments  %}
     <div class="main m-1 pt-1 pl-2 bg-white border rounded">
@@ -114,7 +114,7 @@
     {% endfor %}
   {%- endmacro %}
   {{ traverse(commentTree) }}
-  </div>
+  </section>
 </div>
 <script type="text/javascript">
   const toggle_edit_box = (comment_id) => {
