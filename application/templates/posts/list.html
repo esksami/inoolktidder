@@ -23,54 +23,28 @@
 {% else %}
   <div class="d-flex flex-row">
     <div class="ml-auto d-flex flex-row" style="max-width: xx">
-      <a class="invisible" href="{{ url_for('posts_index', sort='popular') }}" style="text-decoration: none">
-        {% if 'popular' == request.args.get('sort') or not request.args.get('sort') %}
+    {% set queryArg = {'query': request.args.get('query')} if request.args.get('query') else {} %}
+    {% set sorts = ['popular', 'newest', 'oldest'] %}
+    {% set iconsBySort = {
+      'popular': 'trending_up',
+      'newest': 'vertical_align_top',
+      'oldest': 'vertical_align_bottom'
+      } %}
+    {% set currentSort =  request.args.get('sort') or 'popular' %}
+    {% for sort in sorts %}
+      {% set textColor = 'text-primary' if sort == currentSort else 'text-secondary'%}
+      <a class="invisible" href="{{ url_for('posts_index', sort=sort, **queryArg) }}" style="text-decoration: none">
         <div class="d-flex flex-row visible color-hover 
-        pag3-link m-1 mt-3 text-primary small-text">
-        {% else %}
-        <div class="d-flex flex-row visible color-hover 
-        pag3-link m-1 mt-3 text-muted small-text">
-        {% endif %}
+        pag3-link m-1 mt-3 {{ textColor }} small-text">
           <span class="material-icons mx-1 md-18 font-weight-bold">
-            trending_up
+            {{ iconsBySort[sort] }}
           </span>
           <span class="visible small-text-l">
-            popular
+            {{ sort }}
           </span>
         </div>
-      </a>
-      <a class="invisible" href="{{ url_for('posts_index', sort='newest') }}" style="text-decoration: none">
-        {% if 'newest' == request.args.get('sort') %}
-        <div class="d-flex flex-row visible color-hover 
-        pag3-link m-1 mt-3 text-primary small-text">
-        {% else %}
-        <div class="d-flex flex-row visible color-hover 
-        pag3-link m-1 mt-3 text-muted small-text">
-        {% endif %}
-          <span class="material-icons mx-1 md-18 font-weight-bold">
-            vertical_align_top
-          </span>
-          <span class="visible small-text-l">
-            newest
-          </span>
-        </div>
-      </a>
-      <a class="invisible" href="{{ url_for('posts_index', sort='oldest') }}" style="text-decoration: none">
-        {% if 'oldest' == request.args.get('sort') %}
-        <div class="d-flex flex-row visible color-hover 
-        pag3-link m-1 mt-3 text-primary small-text">
-        {% else %}
-        <div class="d-flex flex-row visible color-hover 
-        pag3-link m-1 mt-3 text-muted small-text">
-        {% endif %}
-          <span class="material-icons mx-1 md-18 font-weight-bold">
-            vertical_align_bottom
-          </span>
-          <span class="visible small-text-l">
-            oldest
-          </span>
-        </div>
-      </a>
+      </a> 
+    {% endfor %}
     </div>
   </div>
 
@@ -158,8 +132,10 @@
   </div>
 {% endfor %}
   <div class="page-nav-bar d-flex flex-row text-center mx-auto">
-  {% if pagination.has_prev%}
-    <a class="invisible" href="{{ url_for('posts_index', page=pagination.page-1) }}">
+  {% set pageOtherArgs = request.args.copy() %}
+  {% set _delete = pageOtherArgs.pop('page') if 'page' in pageOtherArgs %}
+  {% if pagination.has_prev %}
+    <a class="invisible" href="{{ url_for('posts_index', page=pagination.page-1, **pageOtherArgs) }}">
       <span class="visible color-hover pag3-link m-2 material-icons text-secondary">
         keyboard_arrow_left
       </span>
@@ -167,7 +143,7 @@
   {% endif %}
   {% if not 1 in page_range %}
     <span class="pag3-link m-2">
-      <a class="text-secondary small-text-l" href="{{ url_for('posts_index', page=1) }}">
+      <a class="text-secondary small-text-l" href="{{ url_for('posts_index', page=1, **pageOtherArgs) }}">
         1
       </a>
     </span>
@@ -178,13 +154,13 @@
   {% for page in page_range %}
     {% if page == pagination.page %}
     <span class="pag3-link m-2 font-weight-bold">
-      <a class="text-secondary" href="{{ url_for('posts_index', page=page) }}">
+      <a class="text-secondary" href="{{ url_for('posts_index', page=page, **pageOtherArgs) }}">
         {{ page }}
       </a>
     </span>
     {% else %}
     <span class="pag3-link m-2">
-      <a class="text-secondary small-text-l" href="{{ url_for('posts_index', page=page) }}">
+      <a class="text-secondary small-text-l" href="{{ url_for('posts_index', page=page, **pageOtherArgs) }}">
         {{ page }}
       </a>
     </span>
@@ -195,13 +171,13 @@
         ...
     </span>
     <span class="pag3-link m-2">
-      <a class="text-secondary small-text-l" href="{{ url_for('posts_index', page=pagination.pages) }}">
+      <a class="text-secondary small-text-l" href="{{ url_for('posts_index', page=pagination.pages, **pageOtherArgs) }}">
         {{ pagination.pages }}
       </a>
     </span>
   {% endif %}
   {% if pagination.has_next%}
-    <a class="invisible" href="{{ url_for('posts_index', page=pagination.page+1) }}">
+    <a class="invisible" href="{{ url_for('posts_index', page=pagination.page+1, **pageOtherArgs) }}">
       <span class="visible color-hover pag3-link m-2 material-icons text-secondary">
         keyboard_arrow_right
       </span>
