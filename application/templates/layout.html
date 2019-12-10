@@ -21,8 +21,8 @@
                 search
               </div>
             </button>
-            <div class="border-bottom mr-3 mb-0">
-              <input id="search-bar" class="form-control form-control-md ml-1 pb-0 border-0 border-bottom" style="box-shadow: none" type="text" placeholder="Search" aria-label="Search" value="{{ request.args.get('query') if 'query' in request.args }}">
+            <div class="mr-3 mb-0">
+              <input id="search-bar" class="form-control form-control-md ml-1 pb-0" style="box-shadow: none;border-top: none; border-left: none; border-right: none; border-radius: 0;" type="text" placeholder="Search" aria-label="Search" value="{{ request.args.get('query') if 'query' in request.args }}">
             </div>
           </div>
         </form>
