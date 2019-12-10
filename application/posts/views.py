@@ -3,7 +3,7 @@ from contextlib import suppress
 from flask import redirect, render_template, request, url_for, request
 from flask_login import login_required, current_user
 
-from sqlalchemy import and_, or_, asc, desc, text
+from sqlalchemy import asc, desc, text
 from sqlalchemy.orm import aliased
 
 from application import app, db
@@ -22,7 +22,11 @@ from application.posts.utils import create_comment_tree
 
 @app.route("/", methods=["GET"])
 def posts_index(page=1, per_page=10, sort='popular'):
-    print('posts posts_index')
+    user_id = None
+
+    if current_user and current_user.is_authenticated:
+        user_id = current_user.id
+
     pagination_kwargs = {
         'page': int(request.args.get('page') or page),
         'per_page': int(request.args.get('per_page') or per_page),
@@ -32,19 +36,11 @@ def posts_index(page=1, per_page=10, sort='popular'):
     sort = request.args.get('sort') or sort
     queryString = request.args.get('query')
 
-    user_id = None
-
-    if current_user and current_user.is_authenticated:
-        user_id = current_user.id        
-
     with session_scope() as session:
         query = posts_with_aggregates(session, user_id=user_id)
 
         if queryString:
-            query = query.filter(
-                or_(Post.title.ilike('%{0}%'.format(queryString)),
-                    Post.content.ilike('%{0}%'.format(queryString)))
-            )
+            query = query.filter(Post.title.ilike('%{}%'.format(queryString)))
 
         if sort == 'newest':
             query = query.order_by(desc(Post.date_created))
@@ -110,12 +106,17 @@ def posts_edit_form(post_id):
     post = Post.query.get(post_id)
 
     if post.account_id != current_user.id:
-        return render_template("posts/details.html", post=post,
-                        error="You can only edit your own posts.")
+        return render_template(
+            "posts/details.html",
+            post=post,
+            error="You can only edit your own posts."
+        )
 
-    return render_template("posts/edit.html",
-                           post=post,
-                           form=PostForm())
+    return render_template(
+        "posts/edit.html",
+        post=post,
+        form=PostForm()
+    )
 
 @app.route("/edit/<post_id>/", methods=["POST"])
 @login_required
@@ -128,7 +129,8 @@ def posts_edit(post_id):
         return render_template(
             "posts/details.html",
             post=post,
-            error="You can only edit your own posts.")
+            error="You can only edit your own posts."
+        )
 
     post.title = form.title.data
     post.content = form.content.data
@@ -152,8 +154,11 @@ def posts_delete(post_id):
         post = Post.query.get(post_id)
 
         if post.account_id != current_user.id:
-            return render_template("posts/details.html", post=post,
-                            error="You can't delete someone elses post.")
+            return render_template(
+                "posts/details.html",
+                post=post,
+                error="You can't delete someone elses post."
+            )
 
         session.delete(post)
         session.commit()
