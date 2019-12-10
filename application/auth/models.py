@@ -4,7 +4,7 @@ from application.models import Base
 from application.roles.models import Role, UserRole
 
 class User(Base):
-    __tablename__ = "account"
+    __tablename__ = 'account'
 
     username = db.Column(db.String(144), unique=True, nullable=False)
     phash = db.Column(db.String(60), nullable=False)

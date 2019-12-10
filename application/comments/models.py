@@ -12,8 +12,8 @@ class Comment(Base, TimestampMixin):
     parent_id = db.Column(db.Integer, db.ForeignKey('comment.id'))
     deleted = db.Column(db.Boolean, default=False, nullable=False)
 
-    user = relationship("User", backref="comment")
-    comment = relationship("Comment")
+    user = relationship('User', backref='comment')
+    comment = relationship('Comment')
 
     def __init__(self, content):
         self.content = content

@@ -60,7 +60,7 @@ def user_edit_username():
         existingUser = session.query(User).filter(User.username == username).first()
 
         if (existingUser):
-            form.username.errors.append("Username already exists")
+            form.username.errors.append('Username already exists')
             return render_template(
                 'auth/profile.html',
                 user=user,
@@ -105,7 +105,7 @@ def user_edit_password():
 
     return redirect(url_for('user_profile'))
 
-@app.route("/profile/delete", methods=["GET", "POST"])
+@app.route('/profile/delete', methods=['GET', 'POST'])
 @login_required
 def user_delete():
     if request.method == 'GET':
@@ -123,7 +123,7 @@ def user_delete():
 
     logout_user()
 
-    return redirect(url_for("posts_index"))
+    return redirect(url_for('posts_index'))
 
 @app.route('/signup', methods = ['GET', 'POST'])
 def auth_signup():
@@ -160,7 +160,7 @@ def auth_signup():
 
         session.commit()
 
-    return redirect(url_for("auth_login"))
+    return redirect(url_for('auth_login'))
 
 
 @app.route('/login', methods = ['GET', 'POST'])

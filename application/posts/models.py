@@ -17,7 +17,7 @@ class Post(Base, TimestampMixin):
         db.ForeignKey('account.id')
     )
 
-    user = relationship("User", backref="post")
+    user = relationship('User', backref='post')
 
     def __init__(self, title, content):
         self.title = title
@@ -39,8 +39,8 @@ class PostLike(Base):
         db.ForeignKey('account.id')
     )
 
-    post = relationship("Post", backref="post_like")
-    user = relationship("User", backref="post_like")
+    post = relationship('Post', backref='post_like')
+    user = relationship('User', backref='post_like')
 
     __table_args__ = (
         UniqueConstraint('post_id', 'account_id'),

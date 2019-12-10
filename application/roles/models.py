@@ -14,8 +14,8 @@ class UserRole(Base):
                         nullable=False)
     account_id = db.Column(db.Integer, db.ForeignKey('account.id'))
 
-    role = relationship("Role", backref="user_role")
-    user = relationship("User", backref="user_role")
+    role = relationship('Role', backref='user_role')
+    user = relationship('User', backref='user_role')
 
 
 @event.listens_for(Role.__table__, 'after_create')

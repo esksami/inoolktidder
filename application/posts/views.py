@@ -20,7 +20,7 @@ from application.posts.query import posts_with_aggregates
 from application.posts.utils import create_comment_tree
 
 
-@app.route("/", methods=["GET"])
+@app.route('/', methods=['GET'])
 def posts_index(page=1, per_page=10, sort='popular'):
     user_id = None
 
@@ -71,25 +71,25 @@ def posts_index(page=1, per_page=10, sort='popular'):
             page_range = list(range(first, last))
 
         return render_template(
-            "posts/list.html",
+            'posts/list.html',
             posts=posts,
             page_range=page_range,
             pagination=pagination
         )
 
-@app.route("/submit")
+@app.route('/submit')
 @login_required
 def posts_submit_form():
-    return render_template("posts/submit.html", form=PostForm())
+    return render_template('posts/submit.html', form=PostForm())
 
-@app.route("/submit", methods=["POST"])
+@app.route('/submit', methods=['POST'])
 @login_required
 @roles_required('APPROVED')
 def posts_submit():
     form = PostForm(request.form)
 
     if not form.validate():
-        return render_template("posts/submit.html", form=form)
+        return render_template('posts/submit.html', form=form)
 
     with session_scope() as session:
         post = Post(form.title.data, form.content.data)
@@ -98,27 +98,27 @@ def posts_submit():
         session.add(post)
         session.commit()
   
-    return redirect(url_for("posts_index"))
+    return redirect(url_for('posts_index'))
 
-@app.route("/edit/<post_id>/")
+@app.route('/edit/<post_id>/')
 @login_required
 def posts_edit_form(post_id):
     post = Post.query.get(post_id)
 
     if post.account_id != current_user.id:
         return render_template(
-            "posts/details.html",
+            'posts/details.html',
             post=post,
-            error="You can only edit your own posts."
+            error='You can only edit your own posts.'
         )
 
     return render_template(
-        "posts/edit.html",
+        'posts/edit.html',
         post=post,
         form=PostForm()
     )
 
-@app.route("/edit/<post_id>/", methods=["POST"])
+@app.route('/edit/<post_id>/', methods=['POST'])
 @login_required
 def posts_edit(post_id):
     form = PostForm(request.form)
@@ -127,9 +127,9 @@ def posts_edit(post_id):
 
     if post.account_id != current_user.id:
         return render_template(
-            "posts/details.html",
+            'posts/details.html',
             post=post,
-            error="You can only edit your own posts."
+            error='You can only edit your own posts.'
         )
 
     post.title = form.title.data
@@ -137,7 +137,7 @@ def posts_edit(post_id):
 
     if not form.validate():
         return render_template(
-            "posts/edit.html",
+            'posts/edit.html',
             post=post,
             form=form
         )
@@ -145,9 +145,9 @@ def posts_edit(post_id):
     with session_scope() as session:
         session.commit()
   
-    return redirect(url_for("posts_details", post_id=post_id))
+    return redirect(url_for('posts_details', post_id=post_id))
 
-@app.route("/delete/<post_id>/", methods=["POST"])
+@app.route('/delete/<post_id>/', methods=['POST'])
 @login_required
 def posts_delete(post_id):
     with session_scope() as session:
@@ -155,17 +155,17 @@ def posts_delete(post_id):
 
         if post.account_id != current_user.id:
             return render_template(
-                "posts/details.html",
+                'posts/details.html',
                 post=post,
-                error="You can't delete someone elses post."
+                error='You can\'t delete someone elses post.'
             )
 
         session.delete(post)
         session.commit()
 
-    return redirect(url_for("posts_index"))
+    return redirect(url_for('posts_index'))
 
-@app.route("/<post_id>/")
+@app.route('/<post_id>/')
 def posts_details(post_id):
     user_id = None
 
@@ -191,13 +191,13 @@ def posts_details(post_id):
             .all())
 
         return render_template(
-            "posts/details.html",
+            'posts/details.html',
             post=post,
             commentTree=create_comment_tree(comments),
             form=CommentForm()
         )
 
-@app.route("/posts/like/<post_id>/", methods=["POST"])
+@app.route('/posts/like/<post_id>/', methods=['POST'])
 @login_required
 def posts_like(post_id):
     with session_scope() as session:
@@ -222,7 +222,7 @@ def posts_like(post_id):
 
     return redirect(request.referrer)
 
-@app.route("/posts/unlike/<post_id>/", methods=["POST"])
+@app.route('/posts/unlike/<post_id>/', methods=['POST'])
 @login_required
 def posts_undo_like(post_id):
     post_like = (PostLike.query
@@ -239,7 +239,7 @@ def posts_undo_like(post_id):
 
     return redirect(request.referrer)
 
-@app.route("/posts/dislike/<post_id>/", methods=["POST"])
+@app.route('/posts/dislike/<post_id>/', methods=['POST'])
 @login_required
 def posts_dislike(post_id):
     with session_scope() as session:
@@ -264,7 +264,7 @@ def posts_dislike(post_id):
 
     return redirect(request.referrer)
 
-@app.route("/posts/undislike/<post_id>/", methods=["POST"])
+@app.route('/posts/undislike/<post_id>/', methods=['POST'])
 @login_required
 def posts_undo_dislike(post_id):
     post_dislike = (PostLike.query

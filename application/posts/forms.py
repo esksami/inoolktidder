@@ -4,14 +4,14 @@ from wtforms import StringField, TextAreaField
 from wtforms.validators import Length
 
 class PostForm(FlaskForm):
-    title = StringField("Title", [
+    title = StringField('Title', [
     	Length(
     		min=3,
     		max=512,
     		message='Title must be between 3 and 512 characters'
     	)
     ])
-    content = TextAreaField("Content", [
+    content = TextAreaField('Content', [
     	Length(
     		min=0,
     		max=8192,

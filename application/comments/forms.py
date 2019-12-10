@@ -3,7 +3,7 @@ from wtforms import TextAreaField
 from wtforms.validators import Length
 
 class CommentForm(FlaskForm):
-    content = TextAreaField("Content", [
+    content = TextAreaField('Content', [
     	Length(
     		min=0, 
     		max=4096,
