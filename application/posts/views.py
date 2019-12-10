@@ -188,6 +188,7 @@ def posts_details(post_id):
             .query(Comment)
             .filter(Comment.post_id == post_id)
             .outerjoin(User, User.id == Comment.account_id)
+            .limit(100)
             .all())
 
         return render_template(
