@@ -152,19 +152,12 @@
     </span>
   {% endif %}
   {% for page in page_range %}
-    {% if page == pagination.page %}
-    <span class="pag3-link m-2 font-weight-bold">
-      <a class="text-secondary" href="{{ url_for('posts_index', page=page, **pageOtherArgs) }}">
-        {{ page }}
-      </a>
-    </span>
-    {% else %}
+    {% set pageNumStyle = 'font-weight-bold' if page == pagination.page else 'small-text-l' %}
     <span class="pag3-link m-2">
-      <a class="text-secondary small-text-l" href="{{ url_for('posts_index', page=page, **pageOtherArgs) }}">
+      <a class="text-secondary {{ pageNumStyle }}" href="{{ url_for('posts_index', page=page, **pageOtherArgs) }}">
         {{ page }}
       </a>
     </span>
-    {% endif %}
   {% endfor %}
   {% if not pagination.pages in page_range %}
     <span class="pag3-link m-2">
