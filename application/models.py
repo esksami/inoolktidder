@@ -21,8 +21,8 @@ class TimestampMixin:
     @declared_attr
     def seconds_since_created(cls):
         return column_property(
-            db.extract('epoch', db.func.current_timestamp()) - 
-            db.extract('epoch', cls.date_created)
+            (db.extract('epoch', db.func.current_timestamp()) - 
+             db.extract('epoch', cls.date_created)).label('seconds_since_created')
         )
 
     def time_since_created_str(self):
