@@ -14,11 +14,6 @@ import sqlalchemy
 
 __all__ = ('posts_with_aggregates',)
 
-
-postLikes = aliased(PostLike, name='post_likes')
-postDislikes = aliased(PostLike, name='post_dislikes')
-userLike = aliased(PostLike, name='user_like')
-
 _posts_with_comment_count = (db.session()
     .query(Post.id.label('post_id'),
            db.func.count(Comment.post_id).label('comments'))
