@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block body %}
-<div class="d-flex flex-column mx-auto">
+<section id="posts" class="d-flex flex-column mx-auto">
   <div class="p-0">
     <a class="invisible" style="text-decoration: none" href="{{ url_for('posts_submit') }}">
     <button class="visible btn-basic btn-submit">
@@ -22,7 +22,7 @@
   </div>
 {% else %}
   <div class="d-flex flex-row">
-    <div class="ml-auto d-flex flex-row" style="max-width: xx">
+    <div class="ml-auto d-flex flex-row">
     {% set queryArg = {'query': request.args.get('query')} if request.args.get('query') else {} %}
     {% set sorts = ['popular', 'newest', 'oldest'] %}
     {% set iconsBySort = {
@@ -32,11 +32,10 @@
       } %}
     {% set currentSort =  request.args.get('sort') or 'popular' %}
     {% for sort in sorts %}
-      {% set textColor = 'text-primary' if sort == currentSort else 'text-secondary'%}
-      <a class="invisible" href="{{ url_for('posts_index', sort=sort, **queryArg) }}" style="text-decoration: none">
-        <div class="d-flex flex-row visible color-hover 
-        pag3-link m-1 mt-3 {{ textColor }} small-text">
-          <span class="material-icons mx-1 md-18 font-weight-bold">
+      {% set isActive = 'active' if sort == currentSort else ''%}
+      <a class="wrapper-link" href="{{ url_for('posts_index', sort=sort, **queryArg) }}" style="">
+        <div class="d-flex flex-row smooth-link {{ isActive }} m-1 mt-3">
+          <span class="material-icons md-18 font-weight-bold mx-1">
             {{ iconsBySort[sort] }}
           </span>
           <span class="visible small-text-l">
@@ -178,5 +177,5 @@
   {% endif %}
   </div>
 {% endif %}
-</div>
+</section>
 {% endblock %}

@@ -1,0 +1,20 @@
+a.wrapper-link {
+  text-decoration: none!important;
+  visibility: hidden!important;
+}
+
+.smooth-link {
+  visibility: visible!important;
+  color: #6c757d!important;
+  transition: color .2s smooth;
+}
+
+.smooth-link.active {
+  visibility: visible!important;
+  color: #007bff!important;
+  transition: color .2s smooth;
+}
+
+.smooth-link:hover {
+  color: #007bff!important;
+}
