@@ -156,14 +156,13 @@ def posts_details(post_id):
     with session_scope() as session:
         query = (posts_with_aggregates(session, user_id=user_id)
             .filter(Post.id == post_id))
-        response = query.first()
 
         (post,
          post.comments,
          post.likes,
          post.dislikes,
          post.popularity,
-         post.userLike) = response
+         post.userLike) = query.first()
 
         comments = (session
             .query(Comment)
