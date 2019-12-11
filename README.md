@@ -48,6 +48,12 @@ Jokainen käyttäjä voi myös antaa yhden plus- tai miinuspisteen postausta koh
 
 > **Huom.** Kommentin poistaminen ei oikeasti poista kommenttia tietokannasta vaan asettaan sen attribuutin `deleted` arvoksi `True`, jolloin kommentin sisällön tilalla näytetään _[deleted]_.
 
+### Muut toiminnallisuudet
+
+- Postauksia voi järjestää niiden listauksen oikealla yläpuolella olevista linkeistä. Vaihtoehtoina on _popular_, _newest_ ja _oldest_.
+- Etsintäpalkki on oikeassa yläkulmassa. Etsiminen rajoitettu postausten otsikkoihin.
+- Sivujen navigaatio löytyy etusivulta postausten alapuolelta.
+
 
 ## Asennusohje Linuxille
 
