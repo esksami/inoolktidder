@@ -155,7 +155,7 @@ def posts_delete(post_id):
     return redirect(url_for('posts_index'))
 
 @app.route('/<post_id>/')
-@validate_post_owner
+@validate_post_id
 def posts_details(post_id):
     user_id = None
 
@@ -188,10 +188,10 @@ def posts_details(post_id):
             form=CommentForm()
         )
 
-@app.route('/posts/like/<post_id>/', methods=['POST'])
+@app.route('/posts/like/<post_id>/<value>', methods=['POST'])
 @login_required
 @validate_post_id
-def posts_like(post_id):
+def posts_toggle_like(post_id, value):
     with session_scope() as session:
         oldLike = (session
             .query(PostLike)
@@ -200,78 +200,22 @@ def posts_like(post_id):
             .first())
 
         newLike = PostLike(
-            value=PostLikeValue.like,
+            value=PostLikeValue(int(value)),
             post_id=post_id,
             account_id=current_user.id
         )
 
-        if oldLike:
+        if not oldLike:
+            session.add(newLike)
+            session.commit()
+        elif newLike.value == oldLike.value:
+            session.delete(oldLike)
+            session.commit()
+        else:
             session.delete(oldLike)
             session.flush()
+            session.add(newLike)
 
-        session.add(newLike)
-        session.commit()
-
-    return redirect(request.referrer)
-
-@app.route('/posts/unlike/<post_id>/', methods=['POST'])
-@login_required
-@validate_post_id
-def posts_undo_like(post_id):
-    post_like = (PostLike.query
-        .filter(PostLike.post_id == post_id,
-                PostLike.account_id == current_user.id)
-        .first())
-
-    if not post_like:
-        return redirect(request.referrer)
-
-    with session_scope() as session:
-        session.delete(post_like)
-        session.commit()
-
-    return redirect(request.referrer)
-
-@app.route('/posts/dislike/<post_id>/', methods=['POST'])
-@login_required
-@validate_post_id
-def posts_dislike(post_id):
-    with session_scope() as session:
-        oldDislike = (session
-            .query(PostLike)
-            .filter(PostLike.post_id == post_id,
-                    PostLike.account_id == current_user.id)
-            .first())
-
-        newDislike = PostLike(
-            value=PostLikeValue.dislike,
-            post_id=post_id,
-            account_id=current_user.id
-        )
-
-        if oldDislike:
-            session.delete(oldDislike)
-            session.flush()
-
-        session.add(newDislike)
-        session.commit()
-
-    return redirect(request.referrer)
-
-@app.route('/posts/undislike/<post_id>/', methods=['POST'])
-@login_required
-@validate_post_id
-def posts_undo_dislike(post_id):
-    post_dislike = (PostLike.query
-        .filter(PostLike.post_id == post_id,
-                PostLike.account_id == current_user.id)
-        .first())
-
-    if not post_dislike:
-        return redirect(request.referrer)
-
-    with session_scope() as session:
-        session.delete(post_dislike)
         session.commit()
 
     return redirect(request.referrer)
