@@ -28,53 +28,43 @@ def posts_index(page=1, per_page=10, sort='popular'):
     if current_user and current_user.is_authenticated:
         user_id = current_user.id
 
-    pagination_kwargs = {
-        'page': int(request.args.get('page') or page),
-        'per_page': int(request.args.get('per_page') or per_page),
-        'max_per_page': 50
+    sort = request.args.get('sort') or sort
+    queryString = request.args.get('query') or ''
+
+    orderBySort = {
+        'newest': desc(Post.date_created),
+        'oldest': asc(Post.date_created),
+        'popular': desc(text('popularity'))
     }
 
-    sort = request.args.get('sort') or sort
-    queryString = request.args.get('query')
-
     with session_scope() as session:
-        query = posts_with_aggregates(session, user_id=user_id)
+        query = (posts_with_aggregates(session, user_id=user_id)
+            .filter(Post.title.ilike('%{}%'.format(queryString)))
+            .order_by(orderBySort[sort]))
 
-        if queryString:
-            query = query.filter(Post.title.ilike('%{}%'.format(queryString)))
-
-        if sort == 'newest':
-            query = query.order_by(desc(Post.date_created))
-        elif sort == 'oldest':
-            query = query.order_by(asc(Post.date_created))
-        elif sort == 'popular':
-            query = query.order_by(desc(text('popularity')))
-
-        pagination = None
-        items = []
-
-        with suppress(Exception):
-            pagination = query.paginate(**pagination_kwargs)
-            items = pagination.items
-
+        try:
+            pagination = query.paginate(
+                page=int(request.args.get('page') or page),
+                per_page=int(request.args.get('per_page') or per_page),
+                max_per_page=50
+            )
+        except:
+            return render_template('posts/list.html', posts=None)
+        
         posts = [post for post,
                           post.comments,
                           post.likes,
                           post.dislikes,
                           post.popularity,
-                          post.userLike in items]
+                          post.userLike in pagination.items]
 
-        page_range = None
-
-        if pagination:
-            first = max(1, pagination.page - 2)
-            last = min(pagination.pages, pagination.page + 2) + 1
-            page_range = list(range(first, last))
+        first = max(1, pagination.page - 2)
+        last = min(pagination.pages, pagination.page + 2) + 1
 
         return render_template(
             'posts/list.html',
             posts=posts,
-            page_range=page_range,
+            page_range=range(first, last),
             pagination=pagination
         )
 
