@@ -1,6 +1,6 @@
 from contextlib import suppress
 
-from flask import redirect, render_template, request, url_for, request
+from flask import redirect, render_template, request, url_for
 from flask_login import login_required, current_user
 
 from sqlalchemy import asc, desc, text
@@ -17,7 +17,7 @@ from application.comments.forms import CommentForm
 from application.posts.models import Post, PostLike, PostLikeValue
 from application.posts.forms import PostForm
 from application.posts.query import posts_with_aggregates
-from application.posts.utils import create_comment_tree
+from application.posts.utils import create_comment_tree, validate_post_id, validate_post_owner
 
 
 @app.route('/', methods=['GET'])
@@ -120,17 +120,10 @@ def posts_edit_form(post_id):
 
 @app.route('/edit/<post_id>/', methods=['POST'])
 @login_required
+@validate_post_owner
 def posts_edit(post_id):
-    form = PostForm(request.form)
-    
     post = Post.query.get(post_id)
-
-    if post.account_id != current_user.id:
-        return render_template(
-            'posts/details.html',
-            post=post,
-            error='You can only edit your own posts.'
-        )
+    form = PostForm(request.form)
 
     post.title = form.title.data
     post.content = form.content.data
@@ -149,16 +142,10 @@ def posts_edit(post_id):
 
 @app.route('/delete/<post_id>/', methods=['POST'])
 @login_required
+@validate_post_owner
 def posts_delete(post_id):
     with session_scope() as session:
         post = Post.query.get(post_id)
-
-        if post.account_id != current_user.id:
-            return render_template(
-                'posts/details.html',
-                post=post,
-                error='You can\'t delete someone elses post.'
-            )
 
         session.delete(post)
         session.commit()
@@ -166,6 +153,7 @@ def posts_delete(post_id):
     return redirect(url_for('posts_index'))
 
 @app.route('/<post_id>/')
+@validate_post_owner
 def posts_details(post_id):
     user_id = None
 
@@ -200,6 +188,7 @@ def posts_details(post_id):
 
 @app.route('/posts/like/<post_id>/', methods=['POST'])
 @login_required
+@validate_post_id
 def posts_like(post_id):
     with session_scope() as session:
         oldLike = (session
@@ -225,6 +214,7 @@ def posts_like(post_id):
 
 @app.route('/posts/unlike/<post_id>/', methods=['POST'])
 @login_required
+@validate_post_id
 def posts_undo_like(post_id):
     post_like = (PostLike.query
         .filter(PostLike.post_id == post_id,
@@ -242,6 +232,7 @@ def posts_undo_like(post_id):
 
 @app.route('/posts/dislike/<post_id>/', methods=['POST'])
 @login_required
+@validate_post_id
 def posts_dislike(post_id):
     with session_scope() as session:
         oldDislike = (session
@@ -267,6 +258,7 @@ def posts_dislike(post_id):
 
 @app.route('/posts/undislike/<post_id>/', methods=['POST'])
 @login_required
+@validate_post_id
 def posts_undo_dislike(post_id):
     post_dislike = (PostLike.query
         .filter(PostLike.post_id == post_id,
