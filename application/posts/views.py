@@ -93,6 +93,7 @@ def posts_submit():
 
 @app.route('/edit/<post_id>/')
 @login_required
+@validate_post_id
 def posts_edit_form(post_id):
     post = Post.query.get(post_id)
 
