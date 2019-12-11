@@ -27,7 +27,8 @@ _posts_with_aggregates = (db.session()
                 case([((PostLike.value == PostLikeValue.dislike), PostLike.value)])
            ).label('dislikes'),
            db.func.sum(
-                case([((PostLike.value == PostLikeValue.like), 1)], else_=-1)
+                case([((PostLike.value == PostLikeValue.like), 1),
+                      ((PostLike.value == PostLikeValue.dislike), -1)], else_=0)
            ).label('popularity'),
            db.func.max(
                 case([((PostLike.account_id == bindparam('user_id')), PostLike.value)])
