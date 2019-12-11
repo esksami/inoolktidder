@@ -51,7 +51,7 @@ Jokainen käyttäjä voi myös antaa yhden plus- tai miinuspisteen postausta koh
 ### Muut toiminnallisuudet
 
 - Postauksia voi järjestää niiden listauksen oikealla yläpuolella olevista linkeistä. Vaihtoehtoina on _popular_, _newest_ ja _oldest_.
-- Etsintäpalkki on oikeassa yläkulmassa. Etsiminen rajoitettu postausten otsikkoihin.
+- Etsintäpalkki on oikeassa yläkulmassa. Etsiminen on rajoitettu postausten otsikkoihin.
 - Sivujen navigaatio löytyy etusivulta postausten alapuolelta.
 
 
