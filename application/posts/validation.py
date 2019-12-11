@@ -1,7 +1,7 @@
 from functools import wraps
 
 from flask import url_for, redirect, request, render_template
-from flask_login import login_required, current_user
+from flask_login import current_user
 
 from application import login_manager
 from application.posts.models import Post
