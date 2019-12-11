@@ -17,6 +17,7 @@ from application.comments.forms import CommentForm
 from application.posts.models import Post, PostLike, PostLikeValue
 from application.posts.forms import PostForm
 from application.posts.query import posts_with_aggregates
+from application.posts.validation import validate_post_id, validate_post_owner
 from application.posts.utils import create_comment_tree, validate_post_id, validate_post_owner
 
 
