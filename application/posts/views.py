@@ -146,7 +146,9 @@ def posts_edit(post_id):
 def posts_delete(post_id):
     with session_scope() as session:
         post = Post.query.get(post_id)
-
+        (session.query(Comment)
+            .filter(Comment.post_id == post_id)
+            .delete())
         session.delete(post)
         session.commit()
 
