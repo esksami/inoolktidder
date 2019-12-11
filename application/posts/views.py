@@ -208,10 +208,8 @@ def posts_toggle_like(post_id, value):
 
         if not oldLike:
             session.add(newLike)
-            session.commit()
         elif newLike.value == oldLike.value:
             session.delete(oldLike)
-            session.commit()
         else:
             session.delete(oldLike)
             session.flush()
